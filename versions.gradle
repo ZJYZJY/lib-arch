@@ -1,0 +1,161 @@
+ext.deps = [:]
+def deps = [:]
+def versions = [:]
+versions.android_gradle_plugin = '4.0.0'
+versions.protobuf_gradle_plugin = '0.8.10'
+
+versions.constraint_layout = "1.1.3"
+versions.appcompat = "1.1.0"
+versions.core = "1.2.0"
+versions.fragment = "1.2.0"
+versions.activity = "1.1.0"
+versions.cardview = "1.0.0"
+versions.annotations = "1.1.0"
+versions.recyclerview = "1.1.0"
+versions.legacy = "1.0.0"
+versions.support = "1.1.0"
+
+versions.kotlin = "1.3.72"
+versions.coroutines = "1.3.5"
+
+versions.lifecycle = "2.2.0"
+versions.navigation = "2.2.0"
+versions.room = "2.2.5"
+versions.wcdb = "1.0.8"
+versions.work = "2.3.4"
+
+versions.koin = "2.1.5"
+versions.glide = "4.8.0"
+versions.okhttp = "3.9.0"
+versions.retrofit = "2.6.0"
+versions.gson = "2.8.6"
+versions.brvah = "3.0.4"
+versions.moshi = "1.9.3"
+versions.mmkv = "1.2.1"
+versions.mars = "1.2.3"
+versions.proto = "3.11.0"
+
+def build_versions = [:]
+build_versions.min_sdk = 21
+build_versions.target_sdk = 28
+build_versions.compile_sdk = 29
+ext.build_versions = build_versions
+
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+deps.protobuf_gradle_plugin = "com.google.protobuf:protobuf-gradle-plugin:$versions.protobuf_gradle_plugin"
+
+def support = [:]
+support.design = "com.google.android.material:material:$versions.support"
+deps.support = support
+
+def androidx = [:]
+androidx.appcompat = "androidx.appcompat:appcompat:$versions.appcompat"
+androidx.core = "androidx.core:core:$versions.core"
+androidx.core_ktx = "androidx.core:core-ktx:$versions.core"
+androidx.activity = "androidx.activity:activity:$versions.activity"
+androidx.activity_ktx = "androidx.activity:activity-ktx:$versions.activity"
+androidx.fragment = "androidx.fragment:fragment:$versions.fragment"
+androidx.fragment_ktx = "androidx.fragment:fragment-ktx:$versions.fragment"
+androidx.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"
+androidx.cardview = "androidx.cardview:cardview:$versions.cardview"
+androidx.annotations = "androidx.annotation:annotation:$versions.annotations"
+androidx.recyclerview = "androidx.recyclerview:recyclerview:$versions.recyclerview"
+androidx.legacy = "androidx.legacy:legacy-support-core-utils:$versions.legacy"
+deps.androidx = androidx
+
+/**
+ * Kotlin依赖
+ */
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.allopen = "org.jetbrains.kotlin:kotlin-allopen:$versions.kotlin"
+kotlin.coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+kotlin.coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+deps.kotlin = kotlin
+
+/**
+ * JetPack依赖组件
+ */
+def room = [:]
+room.runtime = "androidx.room:room-runtime:$versions.room"
+room.compiler = "androidx.room:room-compiler:$versions.room"
+room.room_ktx = "androidx.room:room-ktx:$versions.room"
+room.rxjava2 = "androidx.room:room-rxjava2:$versions.room"
+room.testing = "androidx.room:room-testing:$versions.room"
+room.wcdb = "com.tencent.wcdb:room:$versions.wcdb"
+deps.room = room
+
+def lifecycle = [:]
+lifecycle.viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+lifecycle.livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
+lifecycle.runtime = "androidx.lifecycle:lifecycle-runtime:$versions.lifecycle"
+deps.lifecycle = lifecycle
+
+def work = [:]
+work.runtime = "androidx.work:work-runtime:$versions.work"
+work.runtime_ktx = "androidx.work:work-runtime-ktx:$versions.work"
+deps.work = work
+
+def navigation = [:]
+navigation.runtime = "androidx.navigation:navigation-runtime:$versions.navigation"
+navigation.runtime_ktx = "androidx.navigation:navigation-runtime-ktx:$versions.navigation"
+navigation.fragment = "androidx.navigation:navigation-fragment:$versions.navigation"
+navigation.fragment_ktx = "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
+navigation.ui = "androidx.navigation:navigation-ui:$versions.navigation"
+navigation.ui_ktx = "androidx.navigation:navigation-ui-ktx:$versions.navigation"
+navigation.safe_args_plugin = "androidx.navigation:navigation-safe-args-gradle-plugin:$versions.navigation"
+deps.navigation = navigation
+
+/**
+ * 第三方依赖
+ */
+// kotlin依赖注入
+def koin = [:]
+koin.core = "org.koin:koin-core:$versions.koin"
+koin.core_ext = "org.koin:koin-core-ext:$versions.koin"
+koin.android = "org.koin:koin-android:$versions.koin"
+koin.android_scope = "org.koin:koin-androidx-scope:$versions.koin"
+koin.android_viewmodel = "org.koin:koin-androidx-viewmodel:$versions.koin"
+koin.android_fragment = "org.koin:koin-androidx-fragment:$versions.koin"
+koin.android_ext = "org.koin:koin-androidx-ext:$versions.koin"
+koin.plugin = "org.koin:koin-gradle-plugin:$versions.koin"
+deps.koin = koin
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+deps.retrofit = retrofit
+
+def okhttp = [:]
+okhttp.okhttp3 = "com.squareup.okhttp3:okhttp:$versions.okhttp"
+okhttp.logging_interceptor = "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
+deps.okhttp = okhttp
+
+def glide = [:]
+glide.runtime = "com.github.bumptech.glide:glide:$versions.glide"
+glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+deps.glide = glide
+
+// 多功能RecyclerView的Adapter
+deps.brvah = "com.github.CymChad:BaseRecyclerViewAdapterHelper:$versions.brvah"
+// json转换
+deps.gson = "com.google.code.gson:gson:$versions.gson"
+deps.moshi = "com.squareup.moshi:moshi:$versions.moshi"
+deps.moshi_kotlin = "com.squareup.moshi:moshi-kotlin:$versions.moshi"
+deps.moshi_codegen = "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
+// 键值对存储
+deps.mmkv = "com.tencent:mmkv-static:$versions.mmkv"
+// 如果项目中使用了libc++_shared.so则使用这个依赖
+deps.mmkv_lite = "com.tencent:mmkv:$versions.mmkv"
+// 腾讯Mars
+def mars = [:]
+mars.core = "com.tencent.mars:mars-core:$versions.mars"
+mars.xlog = "com.tencent.mars:mars-xlog:$versions.mars"
+deps.mars = mars
+// ProtoBuf
+deps.proto = "com.google.protobuf:protobuf-java:$versions.proto"
+deps.protoc = "com.google.protobuf:protoc:$versions.proto"
+
+ext.deps = deps

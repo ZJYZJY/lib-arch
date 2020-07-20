@@ -1,0 +1,8 @@
+<resources>
+    <string name="arch_app_name">Arch</string>
+
+    <string name="arch_confirm">确定</string>
+
+    <!--未知来源应用安装-->
+    <string name="arch_request_install_unknown">安装应用需要打开未知来源权限，请去设置中开启权限</string>
+</resources>
