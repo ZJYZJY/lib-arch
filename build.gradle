@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply from: versions
+apply from: '/versions.gradle'
 
 android {
     compileSdkVersion build_versions.compile_sdk
