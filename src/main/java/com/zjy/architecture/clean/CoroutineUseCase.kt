@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 /**
  * Executes business logic synchronously or asynchronously using Coroutines.
  */
-abstract class UseCase<in P, R>(private val coroutineDispatcher: CoroutineDispatcher) {
+abstract class CoroutineUseCase<in P, R>(private val coroutineDispatcher: CoroutineDispatcher) {
 
     /** Executes the use case asynchronously and returns a [Result].
      *
