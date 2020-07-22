@@ -14,7 +14,7 @@ public class LoadingDialog extends Dialog {
     protected static final String TAG = "LoadingDialog";
 
     private Context context;
-    private boolean cancelable;
+    public boolean cancelable;
 
     public LoadingDialog(Context context, boolean cancelable) {
         super(context, R.style.loadingdialog);

@@ -55,8 +55,10 @@ abstract class BaseFragment : Fragment(), Loadable {
         }
         if (dialog == null) {
             dialog = LoadingDialog(activity, cancelable)
+            dialog?.setCanceledOnTouchOutside(false)
         }
         if (dialog?.isShowing == false) {
+            dialog?.cancelable = cancelable
             dialog?.show()
         }
     }
@@ -68,7 +70,7 @@ abstract class BaseFragment : Fragment(), Loadable {
             return
         }
         if (!aty.isFinishing && dialog?.isShowing == true) {
-            dialog!!.cancel()
+            dialog?.cancel()
         }
     }
 }

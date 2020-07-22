@@ -51,6 +51,7 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
             dialog?.setCanceledOnTouchOutside(false)
         }
         if (dialog?.isShowing == false) {
+            dialog?.cancelable = cancelable
             dialog?.show()
         }
     }
