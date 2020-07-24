@@ -12,6 +12,8 @@ versions.activity = "1.1.0"
 versions.cardview = "1.0.0"
 versions.annotations = "1.1.0"
 versions.recyclerview = "1.1.0"
+versions.documentfile = "1.0.1"
+versions.viewpager2 = "1.0.0"
 versions.legacy = "1.0.0"
 versions.support = "1.1.0"
 
@@ -60,6 +62,8 @@ androidx.constraint_layout = "androidx.constraintlayout:constraintlayout:$versio
 androidx.cardview = "androidx.cardview:cardview:$versions.cardview"
 androidx.annotations = "androidx.annotation:annotation:$versions.annotations"
 androidx.recyclerview = "androidx.recyclerview:recyclerview:$versions.recyclerview"
+androidx.documentfile = "androidx.documentfile:documentfile:$versions.documentfile"
+androidx.viewpager2 = "androidx.viewpager2:viewpager2:$versions.viewpager2"
 androidx.legacy = "androidx.legacy:legacy-support-core-utils:$versions.legacy"
 deps.androidx = androidx
 
