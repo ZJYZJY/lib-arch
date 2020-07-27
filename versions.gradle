@@ -40,6 +40,7 @@ versions.mars = "1.2.3"
 versions.proto = "3.11.0"
 versions.permissionx = "1.3.0"
 versions.dsbridge = "3.0-SNAPSHOT"
+versions.background = "1.6.5"
 
 def build_versions = [:]
 build_versions.min_sdk = 21
@@ -174,6 +175,9 @@ deps.protoc = "com.google.protobuf:protoc:$versions.proto"
 deps.permissionx = "com.permissionx.guolindev:permissionx:$versions.permissionx"
 // WebView
 deps.dsbridge = "com.github.wendux:DSBridge-Android:$versions.dsbridge"
+// Shape Drawable框架
+deps.background = "com.noober.background:core:$versions.background"
+
 
 
 ext.deps = deps

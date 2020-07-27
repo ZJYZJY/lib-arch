@@ -16,6 +16,14 @@ inline fun View.visible() {
     visibility = View.VISIBLE
 }
 
+inline fun View.setVisible(visible: Boolean) {
+    visibility = if (visible) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}
+
 /**
  * Set view invisible
  */

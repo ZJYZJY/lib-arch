@@ -68,6 +68,7 @@ dependencies {
     api deps.glide.runtime
     api deps.brvah
     api deps.gson
+    api deps.background
 
     api deps.mars.xlog
     api deps.mmkv
