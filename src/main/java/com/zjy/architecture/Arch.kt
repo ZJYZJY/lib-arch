@@ -3,8 +3,11 @@ package com.zjy.architecture
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Process
+import com.alibaba.android.arouter.launcher.ARouter
 import com.tencent.mars.xlog.Log
 import com.tencent.mars.xlog.Xlog
+import com.zjy.architecture.di.Injector
+import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -30,20 +33,21 @@ object Arch {
     var debug: Boolean = false
 
     private var mContext: Context? = null
-    private var encryptKey: String = ""
 
     /**
      * 在Application的onCreate中初始化
+     *
+     * @param   context     Application Context
+     * @param   debug       是否开启调试模式
+     * @param   encryptKey  加密日志用的密钥，如果传空字符串，则正式环境下不会有日志输出
+     * @param   inject      额外的注入操作
      */
     @JvmStatic
-    @JvmOverloads
-    fun init(context: Context, debug: Boolean = false, encryptKey: String = "", inject: (KoinApplication.() -> Unit)? = null) {
+    fun init(context: Context, debug: Boolean = false, encryptKey: String = "",
+             inject: (KoinApplication.() -> Unit)? = null) {
         this.mContext = context.applicationContext
         this.debug = debug
-        this.encryptKey = encryptKey
-        if (encryptKey.isNotEmpty()) {
-            openXLog(context, debug)
-        }
+        openXLog(context, debug, encryptKey)
 
         // 初始化依赖注入
         startKoin {
@@ -52,26 +56,46 @@ object Arch {
             } else {
                 androidLogger(Level.ERROR)
             }
+            androidContext(this@Arch.context)
 
             inject?.invoke(this)
         }
     }
 
     /**
-     * 通常在Application的onTerminate中调用，用于释放资源，关闭日志
+     * 在Application的onCreate中初始化
+     *
+     * @param   context         Application Context
+     * @param   debug           是否开启调试模式
+     * @param   encryptKey      加密日志用的密钥，如果传空字符串，则正式环境下不会有日志输出
+     * @param   injectRouters   额外注入操作对应的路由
+     */
+    @JvmStatic
+    fun init(context: Context, debug: Boolean = false, encryptKey: String = "",
+             injectRouters: Array<String> = arrayOf()) {
+        init(context, debug, encryptKey) {
+            for (path in injectRouters) {
+                val router = ARouter.getInstance().build(path).navigation() as Injector?
+                if (router != null) {
+                    modules(router.inject())
+                }
+            }
+        }
+    }
+
+    /**
+     * 用于释放资源，关闭日志
      */
     @JvmStatic
     fun release() {
-        if (encryptKey.isNotEmpty()) {
-            Log.appenderClose()
-        }
+        Log.appenderClose()
         stopKoin()
     }
 
     /**
      * 开启日志
      */
-    private fun openXLog(context: Context, debug: Boolean) {
+    private fun openXLog(context: Context, debug: Boolean, encryptKey: String) {
         System.loadLibrary("c++_shared")
         System.loadLibrary("marsxlog")
         val pid = Process.myPid()
@@ -101,13 +125,14 @@ object Arch {
                     "DEBUG_$logFileName", 0, ""
             )
             Xlog.setConsoleLogOpen(true)
-        } else {
+            Log.setLogImp(Xlog())
+        } else if (encryptKey.isNotEmpty()) {
             Xlog.appenderOpen(
                     Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
                     logFileName, 0, encryptKey
             )
             Xlog.setConsoleLogOpen(false)
+            Log.setLogImp(Xlog())
         }
-        Log.setLogImp(Xlog())
     }
 }

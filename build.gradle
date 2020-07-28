@@ -76,6 +76,7 @@ dependencies {
     api deps.brvah
     api deps.gson
     api deps.background
+    api deps.arouter.api
 
     api deps.mars.xlog
     api deps.mmkv
