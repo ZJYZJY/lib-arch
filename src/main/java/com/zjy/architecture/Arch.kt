@@ -5,6 +5,11 @@ import android.content.Context
 import android.os.Process
 import com.tencent.mars.xlog.Log
 import com.tencent.mars.xlog.Xlog
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.KoinApplication
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.core.logger.Level
 
 /**
  * @author zhengjy
@@ -14,32 +19,41 @@ import com.tencent.mars.xlog.Xlog
 object Arch {
 
     /**
-     * 日志加密公钥
-     */
-    const val LOG_ENCRYPT_KEY: String = "76f5a32b08ae06956af61d18299e3bae930f557d438c474f486b88424" +
-            "ddfb908c62ddfc0ff2b06183a089a6d046720f349ab883a6af0f15545beec4ad510d672"
-
-    /**
      * 获取应用全局[Context]
      */
     val context: Context
         get() = checkNotNull(mContext) { "Please init Arch first" }
 
+    /**
+     * 是否开启Debug模式
+     */
+    var debug: Boolean = false
+
     private var mContext: Context? = null
-    private var debug: Boolean = false
-    private var enableLog: Boolean = true
+    private var encryptKey: String = ""
 
     /**
      * 在Application的onCreate中初始化
      */
     @JvmStatic
     @JvmOverloads
-    fun init(context: Context, debug: Boolean = false, enableLog: Boolean = true) {
+    fun init(context: Context, debug: Boolean = false, encryptKey: String = "", inject: (KoinApplication.() -> Unit)? = null) {
         this.mContext = context.applicationContext
         this.debug = debug
-        this.enableLog = enableLog
-        if (enableLog) {
+        this.encryptKey = encryptKey
+        if (encryptKey.isNotEmpty()) {
             openXLog(context, debug)
+        }
+
+        // 初始化依赖注入
+        startKoin {
+            if (debug) {
+                androidLogger(Level.DEBUG)
+            } else {
+                androidLogger(Level.ERROR)
+            }
+
+            inject?.invoke(this)
         }
     }
 
@@ -48,9 +62,10 @@ object Arch {
      */
     @JvmStatic
     fun release() {
-        if (enableLog) {
+        if (encryptKey.isNotEmpty()) {
             Log.appenderClose()
         }
+        stopKoin()
     }
 
     /**
@@ -83,13 +98,13 @@ object Arch {
         if (debug) {
             Xlog.appenderOpen(
                     Xlog.LEVEL_VERBOSE, Xlog.AppednerModeAsync, "", logPath,
-                    "DEBUG_$logFileName", 0, LOG_ENCRYPT_KEY
+                    "DEBUG_$logFileName", 0, ""
             )
             Xlog.setConsoleLogOpen(true)
         } else {
             Xlog.appenderOpen(
                     Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
-                    logFileName, 0, LOG_ENCRYPT_KEY
+                    logFileName, 0, encryptKey
             )
             Xlog.setConsoleLogOpen(false)
         }

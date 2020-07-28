@@ -66,6 +66,12 @@ dependencies {
     api deps.koin.android_fragment
     api deps.koin.android_ext
 
+    api deps.okhttp.okhttp3
+    api deps.okhttp.logging_interceptor
+    api deps.retrofit.runtime
+    api deps.retrofit.gson
+    api deps.retrofit_url
+
     api deps.glide.runtime
     api deps.brvah
     api deps.gson

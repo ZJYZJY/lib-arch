@@ -41,6 +41,7 @@ versions.proto = "3.11.0"
 versions.permissionx = "1.3.0"
 versions.dsbridge = "3.0-SNAPSHOT"
 versions.background = "1.6.5"
+versions.retrofit_url = "1.4.0"
 
 def build_versions = [:]
 build_versions.min_sdk = 21
@@ -177,6 +178,8 @@ deps.permissionx = "com.permissionx.guolindev:permissionx:$versions.permissionx"
 deps.dsbridge = "com.github.wendux:DSBridge-Android:$versions.dsbridge"
 // Shape Drawable框架
 deps.background = "com.noober.background:core:$versions.background"
+// retrofit动态域名切换框架
+deps.retrofit_url = "me.jessyan:retrofit-url-manager:$versions.retrofit_url"
 
 
 
