@@ -26,5 +26,11 @@ val isAndroidQ: Boolean
 /**
  * 判断是否在Android N及以上
  */
-val isAndroidN: Boolean
+inline val isAndroidN: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+
+/**
+ * 判断是否在Android M及以上
+ */
+inline val isAndroidM: Boolean
+    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M

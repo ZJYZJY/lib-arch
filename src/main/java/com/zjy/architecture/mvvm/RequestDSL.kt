@@ -1,8 +1,11 @@
 package com.zjy.architecture.mvvm
 
 import com.tencent.mars.xlog.Log
+import com.zjy.architecture.data.DISCONNECT_ERROR
 import com.zjy.architecture.data.Result
+import com.zjy.architecture.exception.ApiException
 import com.zjy.architecture.ext.handleException
+import com.zjy.architecture.util.NetworkUtils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -52,6 +55,9 @@ fun <T> LoadingViewModel.request(
         override fun build() {
             launch {
                 try {
+                    if (!NetworkUtils.isConnected()) {
+                        throw ApiException(DISCONNECT_ERROR)
+                    }
                     if (loading) {
                         loading(cancelable)
                     }
