@@ -3,6 +3,9 @@ package com.zjy.architecture.ext
 import android.view.View
 import android.widget.Checkable
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
+import com.zjy.architecture.base.Loadable
+import com.zjy.architecture.mvvm.Loading
 
 /**
  * @author zhengjy
@@ -67,6 +70,17 @@ fun <T : View> T.singleClick(time: Long = 500L, listener: View.OnClickListener) 
         if (currentTimeMillis - lastClickTime > time || this is Checkable) {
             lastClickTime = currentTimeMillis
             listener.onClick(this)
+        }
+    }
+}
+
+fun DialogFragment.setupLoading(loading: Loading) {
+    val ctx = activity
+    if (ctx is Loadable?) {
+        if (loading.loading) {
+            ctx?.loading(loading.cancelable)
+        } else {
+            ctx?.dismiss()
         }
     }
 }
