@@ -42,6 +42,7 @@ versions.permissionx = "1.3.0"
 versions.dsbridge = "3.0-SNAPSHOT"
 versions.background = "1.6.5"
 versions.retrofit_url = "1.4.0"
+versions.flyco = "2.1.2@aar"
 
 def build_versions = [:]
 build_versions.min_sdk = 21
@@ -180,6 +181,8 @@ deps.dsbridge = "com.github.wendux:DSBridge-Android:$versions.dsbridge"
 deps.background = "com.noober.background:core:$versions.background"
 // retrofit动态域名切换框架
 deps.retrofit_url = "me.jessyan:retrofit-url-manager:$versions.retrofit_url"
+// 自定义TabLayout
+deps.flyco = "com.flyco.tablayout:FlycoTabLayout_Lib:$versions.flyco"
 
 
 

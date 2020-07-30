@@ -21,6 +21,10 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
     //自定义加载框
     open var dialog: LoadingDialog? = null
 
+    protected open fun setStatusBar() {
+
+    }
+
     protected abstract fun initView()
 
     protected abstract fun initData()
@@ -32,6 +36,7 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
         if (layoutId != 0) {
             setContentView(layoutId)
         }
+        setStatusBar()
         initView()
         initData()
         setEvent()

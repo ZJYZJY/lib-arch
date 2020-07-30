@@ -75,8 +75,8 @@ object Arch {
              injectRouters: Array<String> = arrayOf()) {
         init(context, debug, encryptKey) {
             for (path in injectRouters) {
-                val router = ARouter.getInstance().build(path).navigation() as Injector?
-                if (router != null) {
+                val router = ARouter.getInstance().build(path).navigation()
+                if (router is Injector? && router != null) {
                     modules(router.inject())
                 }
             }
