@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import com.zjy.architecture.fragment.FragmentHandleBackInterface
+import com.zjy.architecture.fragment.FragmentHandleBackUtil
 import com.zjy.architecture.mvvm.Loading
 import com.zjy.architecture.widget.LoadingDialog
 
@@ -14,7 +16,7 @@ import com.zjy.architecture.widget.LoadingDialog
  * @since 2020/07/22
  * Description:
  */
-abstract class BaseFragment : Fragment(), Loadable {
+abstract class BaseFragment : Fragment(), Loadable, FragmentHandleBackInterface {
 
     var TAG = javaClass.simpleName
 
@@ -72,5 +74,9 @@ abstract class BaseFragment : Fragment(), Loadable {
         if (!aty.isFinishing && dialog?.isShowing == true) {
             dialog?.cancel()
         }
+    }
+
+    override fun onBackPressedSupport(): Boolean {
+        return FragmentHandleBackUtil.handleBackPress(this)
     }
 }

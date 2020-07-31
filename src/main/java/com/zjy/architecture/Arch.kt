@@ -1,12 +1,14 @@
 package com.zjy.architecture
 
 import android.app.ActivityManager
+import android.app.Application
 import android.content.Context
 import android.os.Process
 import com.alibaba.android.arouter.launcher.ARouter
 import com.tencent.mars.xlog.Log
 import com.tencent.mars.xlog.Xlog
 import com.zjy.architecture.di.Injector
+import com.zjy.architecture.util.ActivityUtils
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.KoinApplication
@@ -37,34 +39,6 @@ object Arch {
     /**
      * 在Application的onCreate中初始化
      *
-     * @param   context     Application Context
-     * @param   debug       是否开启调试模式
-     * @param   encryptKey  加密日志用的密钥，如果传空字符串，则正式环境下不会有日志输出
-     * @param   inject      额外的注入操作
-     */
-    @JvmStatic
-    fun init(context: Context, debug: Boolean = false, encryptKey: String = "",
-             inject: (KoinApplication.() -> Unit)? = null) {
-        this.mContext = context.applicationContext
-        this.debug = debug
-        openXLog(context, debug, encryptKey)
-
-        // 初始化依赖注入
-        startKoin {
-            if (debug) {
-                androidLogger(Level.DEBUG)
-            } else {
-                androidLogger(Level.ERROR)
-            }
-            androidContext(this@Arch.context)
-
-            inject?.invoke(this)
-        }
-    }
-
-    /**
-     * 在Application的onCreate中初始化
-     *
      * @param   context         Application Context
      * @param   debug           是否开启调试模式
      * @param   encryptKey      加密日志用的密钥，如果传空字符串，则正式环境下不会有日志输出
@@ -80,6 +54,35 @@ object Arch {
                     modules(router.inject())
                 }
             }
+        }
+    }
+
+    /**
+     * 在Application的onCreate中初始化
+     *
+     * @param   context     Application Context
+     * @param   debug       是否开启调试模式
+     * @param   encryptKey  加密日志用的密钥，如果传空字符串，则正式环境下不会有日志输出
+     * @param   inject      额外的注入操作
+     */
+    @JvmStatic
+    fun init(context: Context, debug: Boolean = false, encryptKey: String = "",
+             inject: (KoinApplication.() -> Unit)? = null) {
+        this.mContext = context.applicationContext
+        this.debug = debug
+        openXLog(context, debug, encryptKey)
+        ActivityUtils.registerActivityLifecycleCallbacks(context as Application)
+
+        // 初始化依赖注入
+        startKoin {
+            if (debug) {
+                androidLogger(Level.DEBUG)
+            } else {
+                androidLogger(Level.ERROR)
+            }
+            androidContext(this@Arch.context)
+
+            inject?.invoke(this)
         }
     }
 
