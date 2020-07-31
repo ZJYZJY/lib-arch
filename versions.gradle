@@ -43,6 +43,7 @@ versions.dsbridge = "3.0-SNAPSHOT"
 versions.background = "1.6.5"
 versions.retrofit_url = "1.4.0"
 versions.flyco = "2.1.2@aar"
+versions.flexbox = "2.0.1"
 
 def build_versions = [:]
 build_versions.min_sdk = 21
@@ -183,6 +184,8 @@ deps.background = "com.noober.background:core:$versions.background"
 deps.retrofit_url = "me.jessyan:retrofit-url-manager:$versions.retrofit_url"
 // 自定义TabLayout
 deps.flyco = "com.flyco.tablayout:FlycoTabLayout_Lib:$versions.flyco"
+// FlexBox
+deps.flexbox = "com.google.android:flexbox:$versions.flexbox"
 
 
 
