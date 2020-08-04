@@ -9,34 +9,20 @@ import androidx.annotation.StringRes
  * @since 2020/05/21
  * Description:
  */
-fun Context.toast(content: String, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(this, content, duration).show()
+private var sToast: Toast? = null
+
+fun Context.toast(@StringRes res: Int, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
+    sToast?.cancel()
+    sToast = Toast.makeText(this, res, duration).apply {
+        config?.invoke(this)
+        show()
+    }
 }
 
-fun Context.toast(@StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) {
-    toast(getString(id), duration)
-}
-
-fun Context.longToast(content: String) {
-    toast(content, Toast.LENGTH_LONG)
-}
-
-fun Context.longToast(@StringRes id: Int) {
-    toast(id, Toast.LENGTH_LONG)
-}
-
-fun Any.toast(context: Context, content: String, duration: Int = Toast.LENGTH_SHORT) {
-    context.toast(content, duration)
-}
-
-fun Any.toast(context: Context, @StringRes id: Int, duration: Int = Toast.LENGTH_SHORT) {
-    context.toast(id, duration)
-}
-
-fun Any.longToast(context: Context, content: String) {
-    context.longToast(content)
-}
-
-fun Any.longToast(context: Context, @StringRes id: Int) {
-    context.longToast(id)
+fun Context.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
+    sToast?.cancel()
+    sToast = Toast.makeText(this, content, duration).apply {
+        config?.invoke(this)
+        show()
+    }
 }

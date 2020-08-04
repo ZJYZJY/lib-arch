@@ -92,15 +92,16 @@ object ActivityUtils {
      * 退出程序
      */
     @Synchronized
-    fun exitApp() {
+    fun exitApp(kill: Boolean = false) {
         // 结束activity队列中的所有activity
         for (activity in activityList) {
             if (!activity.isFinishing) {
                 activity.finish()
             }
         }
-        Process.killProcess(Process.myPid())
-        System.exit(0)
+        if (kill) {
+            Process.killProcess(Process.myPid())
+        }
     }
 
     val isBackground: Boolean
