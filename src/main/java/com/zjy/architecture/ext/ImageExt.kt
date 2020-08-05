@@ -33,11 +33,9 @@ fun ImageView.load(
 }
 
 private val DEFAULT_APPLY: RequestBuilder<Drawable>.(Int) -> RequestBuilder<Drawable> = {
-    apply(
-        if (it == 0) {
-            RequestOptions()
-        } else {
-            RequestOptions().placeholder(it)
-        }
-    )
+    if (it == 0) {
+        this
+    } else {
+        apply(RequestOptions().placeholder(it))
+    }
 }
