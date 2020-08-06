@@ -3,6 +3,7 @@ package com.zjy.architecture.ext
 import android.content.Context
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 
 /**
  * @author zhengjy
@@ -22,6 +23,15 @@ fun Context.toast(@StringRes res: Int, duration: Int = Toast.LENGTH_SHORT, confi
 fun Context.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
     sToast?.cancel()
     sToast = Toast.makeText(this, content, duration).apply {
+        config?.invoke(this)
+        show()
+    }
+}
+
+fun Fragment.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
+    val context = context ?: return
+    sToast?.cancel()
+    sToast = Toast.makeText(context, content, duration).apply {
         config?.invoke(this)
         show()
     }
