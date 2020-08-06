@@ -11,6 +11,8 @@ import com.zjy.architecture.data.*
  */
 class ApiException : RuntimeException {
 
+    private var errorCode: Int = IGNORE_ERROR
+
     /**
      * 动态指定message
      *
@@ -20,7 +22,9 @@ class ApiException : RuntimeException {
     constructor(
         errorCode: Int,
         errorMessage: String? = getApiExceptionMessage(errorCode)
-    )
+    ) : super(errorMessage) {
+        this.errorCode = errorCode
+    }
 
     constructor(e: Exception) : super(e)
 
