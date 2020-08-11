@@ -39,6 +39,7 @@ interface Preference {
      * 提供存储功能的具体实现
      */
     val sp: IStorage
+        get() = DefaultPreference.instance
 
     operator fun <T> get(key: String, defaultValue: T): T {
         return sp.getValue(key, defaultValue)

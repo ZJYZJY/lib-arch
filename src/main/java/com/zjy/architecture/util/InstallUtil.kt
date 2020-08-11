@@ -28,13 +28,9 @@ object InstallUtil {
      * @param file      需要安装的apk文件
      * @param authority FileProvider对应的authority
      */
-    fun install(
-        context: Context,
-        file: File,
-        authority: String = "${context.packageName}.fileprovider"
-    ) {
+    fun install(context: Context, file: File, authority: String) {
         when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> startInstallO(context, file)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> startInstallO(context, file, authority)
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> startInstallN(context, file, authority)
             else -> startInstall(context, file)
         }
@@ -54,11 +50,7 @@ object InstallUtil {
      * android7.x
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private fun startInstallN(
-        context: Context,
-        file: File,
-        authority: String
-    ) {
+    private fun startInstallN(context: Context, file: File, authority: String) {
         // authority是指在AndroidManifest中的android:authorities值
         val apkUri = FileProvider.getUriForFile(context, authority, file)
         val install = Intent(Intent.ACTION_VIEW)
@@ -74,11 +66,7 @@ object InstallUtil {
      * android8.x
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun startInstallO(
-        context: Context,
-        file: File,
-        authority: String = "${context.packageName}.fileprovider"
-    ) {
+    private fun startInstallO(context: Context, file: File, authority: String) {
         val isGranted = context.packageManager.canRequestPackageInstalls()
         if (isGranted) {
             startInstallN(context, file, authority)
