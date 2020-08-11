@@ -44,6 +44,7 @@ versions.background = "1.6.5"
 versions.retrofit_url = "1.4.0"
 versions.flyco = "2.1.2@aar"
 versions.flexbox = "2.0.1"
+versions.zxing_lite = "1.1.9-androidx"
 
 def build_versions = [:]
 build_versions.min_sdk = 21
@@ -187,6 +188,8 @@ deps.retrofit_url = "me.jessyan:retrofit-url-manager:$versions.retrofit_url"
 deps.flyco = "com.flyco.tablayout:FlycoTabLayout_Lib:$versions.flyco"
 // FlexBox
 deps.flexbox = "com.google.android:flexbox:$versions.flexbox"
+// 集成Zxing的二维码库
+deps.zxing_lite = "com.king.zxing:zxing-lite:$versions.zxing_lite"
 
 
 
