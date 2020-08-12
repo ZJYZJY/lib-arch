@@ -13,7 +13,7 @@ import com.bumptech.glide.request.RequestOptions
  * Description:ImageView扩展函数
  */
 fun ImageView.load(
-    url: String,
+    url: String?,
     placeholder: Int = 0,
     block: RequestBuilder<Drawable>.(Int) -> RequestBuilder<Drawable> = DEFAULT_APPLY
 ) {
@@ -23,7 +23,7 @@ fun ImageView.load(
 }
 
 fun ImageView.load(
-    uri: Uri,
+    uri: Uri?,
     placeholder: Int = 0,
     block: RequestBuilder<Drawable>.(Int) -> RequestBuilder<Drawable> = DEFAULT_APPLY
 ) {

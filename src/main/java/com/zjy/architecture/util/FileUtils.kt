@@ -2,9 +2,11 @@ package com.zjy.architecture.util
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresPermission
 import androidx.annotation.WorkerThread
+import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import java.io.BufferedOutputStream
 import java.io.File
@@ -53,6 +55,25 @@ object FileUtils {
             copyFile
         } catch (e: Exception) {
             null
+        }
+    }
+
+    /**
+     * 根据mime类型，创建一个缓存文件Uri
+     */
+    fun createCacheUri(context: Context, mimeType: String, authority: String): Uri? {
+        val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+        val timeStamp = System.currentTimeMillis()
+        val prefix = when {
+            mimeType.startsWith("image") -> "IMG"
+            mimeType.startsWith("video") -> "VID"
+            else -> "DOC"
+        }
+        val file = File("${context.externalCacheDir}", "${prefix}_${timeStamp}.$ext")
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            FileProvider.getUriForFile(context, authority, file)
+        } else {
+            Uri.fromFile(file)
         }
     }
 }
