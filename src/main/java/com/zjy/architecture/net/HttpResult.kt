@@ -1,5 +1,6 @@
 package com.zjy.architecture.net
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 /**
@@ -9,6 +10,7 @@ import java.io.Serializable
  */
 class HttpResult<T>(
     val code: Int,
+    @SerializedName(value = "message", alternate = ["msg"])
     val message: String?,
     val data: T
 ) : Serializable

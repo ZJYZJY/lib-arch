@@ -17,11 +17,11 @@ import kotlinx.coroutines.launch
  */
 abstract class RequestDSL<T> {
 
-    var onStart: (() -> Unit)? = null
-    var onRequest: (suspend CoroutineScope.() -> Result<T>)? = null
-    var onSuccess: ((T) -> Unit)? = null
-    var onFail: ((Throwable) -> Unit)? = null
-    var onComplete: (() -> Unit)? = null
+    internal var onStart: (() -> Unit)? = null
+    internal var onRequest: (suspend CoroutineScope.() -> Result<T>)? = null
+    internal var onSuccess: ((T) -> Unit)? = null
+    internal var onFail: ((Throwable) -> Unit)? = null
+    internal var onComplete: (() -> Unit)? = null
 
     @Deprecated("如果需要进行初始化操作直接进行即可，无需调用这个方法")
     fun onStart(block: () -> Unit) {
