@@ -80,10 +80,5 @@ dependencies {
     api deps.arouter.api
 
     api deps.mars.xlog
-    api deps.mmkv
 
-//    api deps.moshi
-//    api deps.moshi_kotlin
-//    kapt deps.moshi_codegen
-//    annotationProcessor deps.moshi_codegen
 }
