@@ -1,10 +1,10 @@
 package com.zjy.architecture.ext
 
-import com.bumptech.glide.load.HttpException
 import com.google.gson.JsonSyntaxException
 import com.zjy.architecture.data.*
 import com.zjy.architecture.exception.ApiException
 import com.zjy.architecture.net.HttpResult
+import retrofit2.HttpException
 import java.io.IOException
 import java.lang.ClassCastException
 import java.net.MalformedURLException
@@ -41,7 +41,7 @@ fun handleException(t: Exception?): ApiException {
     } else if (t is MalformedURLException || t is UnknownHostException) {
         ApiException(HOST_ERROR)
     } else if (t is HttpException) {
-        if (t.statusCode / 100 == 5) {
+        if (t.code() / 100 == 5) {
             // 状态码5XX则为服务器错误
             ApiException(SERVER_ERROR)
         } else {
