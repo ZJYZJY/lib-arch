@@ -1,6 +1,6 @@
 package com.zjy.architecture.ext
 
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import com.zjy.architecture.Arch
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager
 import okhttp3.Interceptor
@@ -30,12 +30,13 @@ fun OkHttpClient.Builder.addInterceptors(vararg interceptor: Interceptor): OkHtt
  * 创建Retrofit对象通用方法
  *
  * @param client    实际请求的OkHttpClient
+ * @param gson      Gson
  * @param url       请求接口的baseUrl
  */
-fun createRetrofit(client: OkHttpClient, url: String): Retrofit {
+fun createRetrofit(client: OkHttpClient, gson: Gson, url: String): Retrofit {
     return Retrofit.Builder()
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .baseUrl(url)
             .build()
 }

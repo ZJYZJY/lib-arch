@@ -25,7 +25,7 @@ suspend fun <T> apiCall(code: Int = SUCCESS_CODE, call: suspend () -> HttpResult
             if (it.code == code) {
                 Result.Success(it.data)
             } else {
-                Result.Error(handleException(Exception(it.message)))
+                Result.Error(ApiException(it.message))
             }
         }
     } catch (e: Exception) {

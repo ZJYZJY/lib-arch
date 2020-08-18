@@ -22,9 +22,11 @@ class ApiException : RuntimeException {
     constructor(
         errorCode: Int,
         errorMessage: String? = getApiExceptionMessage(errorCode)
-    ) : super(errorMessage) {
+    ) : this(errorMessage) {
         this.errorCode = errorCode
     }
+
+    constructor(errorMessage: String?) : super(errorMessage)
 
     constructor(e: Exception) : super(e)
 

@@ -36,3 +36,12 @@ fun Fragment.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, co
         show()
     }
 }
+
+fun Fragment.toast(@StringRes res: Int, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
+    val context = context ?: return
+    sToast?.cancel()
+    sToast = Toast.makeText(context, res, duration).apply {
+        config?.invoke(this)
+        show()
+    }
+}
