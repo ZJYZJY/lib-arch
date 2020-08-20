@@ -3,13 +3,14 @@ package com.zjy.architecture.exception
 import com.zjy.architecture.Arch
 import com.zjy.architecture.R
 import com.zjy.architecture.data.*
+import java.io.IOException
 
 /**
  * @author zhengjy
  * @since 2020/07/27
  * Description:
  */
-class ApiException : RuntimeException {
+class ApiException : IOException {
 
     private var errorCode: Int = IGNORE_ERROR
 
