@@ -30,8 +30,8 @@ object FileUtils {
      */
     @RequiresPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
     @WorkerThread
-    fun copyToCacheFile(context: Context, uri: Uri): File? {
-        val path = uri.path ?: return null
+    fun copyToCacheFile(context: Context, uri: Uri?): File? {
+        val path = uri?.path ?: return null
         val index = path.lastIndexOf('/')
         val fileName = if (index != -1) {
             path.substring(index + 1)
@@ -44,7 +44,8 @@ object FileUtils {
             "${System.currentTimeMillis()}.${ext}"
         }
 
-        val copyFile = File(context.externalCacheDir?.absolutePath + File.separator + fileName)
+        val cacheDir = context.externalCacheDir ?: context.cacheDir
+        val copyFile = File(cacheDir.absolutePath + File.separator + fileName)
         return try {
             context.contentResolver.openInputStream(uri)?.use { input ->
                 BufferedOutputStream(FileOutputStream(copyFile)).use {
@@ -61,7 +62,19 @@ object FileUtils {
     /**
      * 根据mime类型，创建一个缓存文件Uri
      */
-    fun createCacheUri(context: Context, mimeType: String, authority: String): Uri? {
+    fun createCacheUri(context: Context, mimeType: String, authority: String): Uri {
+        val file = createCacheFile(context, mimeType)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            FileProvider.getUriForFile(context, authority, file)
+        } else {
+            Uri.fromFile(file)
+        }
+    }
+
+    /**
+     * 根据mime类型，创建一个缓存文件File
+     */
+    fun createCacheFile(context: Context, mimeType: String): File {
         val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
         val timeStamp = System.currentTimeMillis()
         val prefix = when {
@@ -69,11 +82,7 @@ object FileUtils {
             mimeType.startsWith("video") -> "VID"
             else -> "DOC"
         }
-        val file = File("${context.externalCacheDir}", "${prefix}_${timeStamp}.$ext")
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            FileProvider.getUriForFile(context, authority, file)
-        } else {
-            Uri.fromFile(file)
-        }
+        val cacheDir = context.externalCacheDir ?: context.cacheDir
+        return File(cacheDir, "${prefix}_${timeStamp}.$ext")
     }
 }
