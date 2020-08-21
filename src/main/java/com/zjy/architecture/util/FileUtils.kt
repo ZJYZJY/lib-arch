@@ -85,4 +85,16 @@ object FileUtils {
         val cacheDir = context.externalCacheDir ?: context.cacheDir
         return File(cacheDir, "${prefix}_${timeStamp}.$ext")
     }
+
+    fun file2Uri(context: Context, file: File, authority: String): Uri {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            FileProvider.getUriForFile(context, authority, file)
+        } else {
+            Uri.fromFile(file)
+        }
+    }
+}
+
+fun File.toUri(context: Context, authority: String): Uri {
+    return FileUtils.file2Uri(context, this, authority)
 }
