@@ -1,7 +1,9 @@
 package com.zjy.architecture.ext
 
+import android.graphics.Paint
 import android.view.View
 import android.widget.Checkable
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.zjy.architecture.base.Loadable
@@ -39,6 +41,26 @@ inline fun View.invisible() {
  */
 inline fun View.gone() {
     visibility = View.GONE
+}
+
+/**
+ * 设置中粗体
+ */
+fun TextView.mediumBold() {
+    paint.apply {
+        style = Paint.Style.FILL_AND_STROKE
+        strokeWidth = 1f
+    }
+}
+
+fun TextView.mediumText(text: CharSequence) {
+    mediumBold()
+    setText(text)
+}
+
+fun TextView.mediumText(res: Int) {
+    mediumBold()
+    setText(res)
 }
 
 /**
