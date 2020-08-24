@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException
 import com.zjy.architecture.data.*
 import com.zjy.architecture.exception.ApiException
 import com.zjy.architecture.net.HttpResult
+import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.ClassCastException
@@ -29,7 +30,12 @@ suspend fun <T> apiCall(code: Int = SUCCESS_CODE, call: suspend () -> HttpResult
             }
         }
     } catch (e: Exception) {
-        Result.Error(handleException(e))
+        if (e is CancellationException) {
+            // do nothing
+            throw e
+        } else {
+            Result.Error(handleException(e))
+        }
     }
 }
 

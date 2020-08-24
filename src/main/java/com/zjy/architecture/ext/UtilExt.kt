@@ -14,7 +14,7 @@ inline fun <reified T, R> T.tryWith(crossinline block: () -> R): R? {
     return try {
         block()
     } catch (e: Exception) {
-        Log.e(T::class.java.name, "", e)
+        Log.e(T::class.java.name, e.message)
         null
     }
 }
@@ -26,4 +26,40 @@ fun Long.format(format: String, locale: Locale? = null): String {
     } else {
         SimpleDateFormat(format, locale).format(this)
     }
+}
+
+/**
+ * 字符串截取小数点后number位
+ * 末位不足，则补全 0
+ *
+ * @param count
+ * @return
+ */
+fun String.checkString(count: Int): String {
+    var result = this
+    if (this.contains(".")) {
+        val pointLength = length - 1 - indexOf(".")
+        when {
+            count == 0 -> result = substring(0, indexOf("."))
+            pointLength >= count -> result = substring(0, indexOf(".") + count + 1)
+            pointLength < count -> {
+                val add = count - pointLength
+                val builder = StringBuilder(this)
+                for (i in 0 until add) {
+                    builder.append("0")
+                }
+                result = builder.toString()
+            }
+        }
+    } else {
+        if (count > 0) {
+            val builder = StringBuilder(this)
+            builder.append(".")
+            for (i in 0 until count) {
+                builder.append("0")
+            }
+            result = builder.toString()
+        }
+    }
+    return result
 }
