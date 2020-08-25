@@ -2,7 +2,6 @@ package com.zjy.architecture.util
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresPermission
 import androidx.annotation.WorkerThread
@@ -63,12 +62,7 @@ object FileUtils {
      * 根据mime类型，创建一个缓存文件Uri
      */
     fun createCacheUri(context: Context, mimeType: String, authority: String): Uri {
-        val file = createCacheFile(context, mimeType)
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            FileProvider.getUriForFile(context, authority, file)
-        } else {
-            Uri.fromFile(file)
-        }
+        return createCacheFile(context, mimeType).toUri(context, authority)
     }
 
     /**
@@ -87,7 +81,7 @@ object FileUtils {
     }
 
     fun file2Uri(context: Context, file: File, authority: String): Uri {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        return if (isAndroidN) {
             FileProvider.getUriForFile(context, authority, file)
         } else {
             Uri.fromFile(file)
