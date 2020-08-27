@@ -27,7 +27,7 @@ versions.wcdb = "1.0.8"
 versions.work = "2.3.4"
 
 versions.koin = "2.1.5"
-versions.glide = "4.8.0"
+versions.glide = "4.11.0"
 versions.arouter = "1.4.0"
 versions.arouterc = "1.2.1"
 versions.okhttp = "3.9.0"

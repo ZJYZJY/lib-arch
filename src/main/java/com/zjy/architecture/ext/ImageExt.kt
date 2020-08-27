@@ -36,6 +36,6 @@ private val DEFAULT_APPLY: RequestBuilder<Drawable>.(Int) -> RequestBuilder<Draw
     if (it == 0) {
         this
     } else {
-        apply(RequestOptions().placeholder(it))
+        apply(RequestOptions().placeholder(it).error(it))
     }
 }

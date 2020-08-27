@@ -2,15 +2,16 @@ package com.zjy.architecture.util
 
 import android.content.Context
 import android.net.Uri
+import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresPermission
 import androidx.annotation.WorkerThread
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
+import com.zjy.architecture.ext.tryWith
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.IllegalArgumentException
 
 /**
  * @author zhengjy
@@ -30,17 +31,23 @@ object FileUtils {
     @RequiresPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
     @WorkerThread
     fun copyToCacheFile(context: Context, uri: Uri?): File? {
-        val path = uri?.path ?: return null
-        val index = path.lastIndexOf('/')
-        val fileName = if (index != -1) {
-            path.substring(index + 1)
-        } else {
+        if (uri == null) return null
+        var fileName = tryWith {
+            context.contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null)?.use {
+                if (it.moveToFirst()) {
+                    it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME));
+                } else {
+                    ""
+                }
+            }
+        }
+        if (fileName.isNullOrEmpty()) {
             val document = DocumentFile.fromSingleUri(context, uri)
             if (document?.type == null) {
                 throw IllegalArgumentException("uri must be a file not a directory")
             }
             val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(document.type)
-            "${System.currentTimeMillis()}.${ext}"
+            fileName = "${System.currentTimeMillis()}.${ext}"
         }
 
         val cacheDir = context.externalCacheDir ?: context.cacheDir
