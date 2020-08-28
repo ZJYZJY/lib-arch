@@ -111,6 +111,15 @@ object ActivityUtils {
         return activityList.size
     }
 
+    fun isActivityExist(activityName: String): Boolean {
+        for (activity in activityList) {
+            if (activity.javaClass.name == activityName) {
+                return true
+            }
+        }
+        return false
+    }
+
     @Synchronized
     fun finish(activityName: String) {
         for (activity in activityList) {
