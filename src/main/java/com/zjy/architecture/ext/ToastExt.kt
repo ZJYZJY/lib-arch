@@ -45,3 +45,11 @@ fun Fragment.toast(@StringRes res: Int, duration: Int = Toast.LENGTH_SHORT, conf
         show()
     }
 }
+
+fun Fragment.cancelToast() {
+    sToast?.cancel()
+}
+
+fun Context.cancelToast() {
+    sToast?.cancel()
+}
