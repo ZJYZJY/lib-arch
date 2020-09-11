@@ -19,6 +19,7 @@ package com.zjy.architecture.clean
 import com.zjy.architecture.data.Result
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import kotlin.Throws
 
 /**
  * Executes business logic synchronously or asynchronously using Coroutines.
