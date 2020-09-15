@@ -79,6 +79,17 @@
 -keep public class * extends android.app.*{*;}
 -keepattributes *Annotation*
 
+# 保留support下的所有类及其内部类
+-keep class android.support.** {*;}
+
+# 保留继承的
+-keep public class * extends android.support.v4.**
+-keep public class * extends android.support.v7.**
+#-keep public class * extends android.support.annotation.**
+
+# 保留R下面的资源
+-keep class **.R$* {*;}
+
 # AndroidX
 -keep class com.google.android.material.** {*;}
 -keep class androidx.** {*;}
@@ -89,9 +100,9 @@
 -dontwarn androidx.**
 
 #保持 native 方法不被混淆
-#    		-keepclasseswithmembernames class * {
-#    		    native <methods>;
-#    		}
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
 # 用到反射
 -keep public class com.android.internal.policy.DecorContext
 -keep public class android.os.ServiceManager
@@ -108,13 +119,19 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
+# 保留枚举类不被混淆
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
 
+# 保留Parcelable序列化类不被混淆
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
+}
+-keepclassmembers class * implements android.os.Parcelable {
+ public <fields>;
+ private <fields>;
 }
 
 -keep public class * extends android.os.IInterface
@@ -129,7 +146,7 @@
 -keep interface android.support.v4.app.** { *; }
 -keep public class * extends android.support.v4.**
 
-#序列化存储
+# 保留Serializable序列化的类不被混淆
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;
@@ -138,4 +155,56 @@
     private void readObject(java.io.ObjectInputStream);
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
+}
+
+-keepclassmembers class * extends android.webkit.WebViewClient {
+    public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
+    public boolean *(android.webkit.WebView, java.lang.String);
+}
+-keepclassmembers class * extends android.webkit.WebViewClient {
+    public void *(android.webkit.webView, java.lang.String);
+}
+
+################################################第三方库################################################
+# OkHttp3
+-dontwarn okhttp3.logging.**
+-keep class okhttp3.internal.**{*;}
+-dontwarn okio.**
+
+# Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
+# EnclosingMethod is required to use InnerClasses.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+
+# Retrofit does reflection on method and parameter annotations.
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+
+# Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# Ignore JSR 305 annotations for embedding nullability information.
+-dontwarn javax.annotation.**
+
+# Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
+-dontwarn kotlin.Unit
+
+# Top-level functions that can only be used by Kotlin.
+-dontwarn retrofit2.KotlinExtensions
+-dontwarn retrofit2.KotlinExtensions$*
+
+# With R8 full mode, it sees no subtypes of Retrofit interfaces since they are created with a Proxy
+# and replaces all potential values with null. Explicitly keeping the interfaces prevents this.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface <1>
+
+# Glide相关
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+ **[] $VALUES;
+ public *;
 }
