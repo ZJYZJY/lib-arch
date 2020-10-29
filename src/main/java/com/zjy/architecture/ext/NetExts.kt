@@ -9,6 +9,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.X509TrustManager
 
 /**
  * @author zhengjy
@@ -22,6 +24,13 @@ fun OkHttpClient.Builder.addChangeUrlInterceptor(manager: RetrofitUrlManager): O
 fun OkHttpClient.Builder.addInterceptors(vararg interceptor: Interceptor): OkHttpClient.Builder {
     interceptor.forEach {
         addInterceptor(it)
+    }
+    return this
+}
+
+fun OkHttpClient.Builder.addSSLSocketFactory(sslFactory: SSLSocketFactory?, trustManager: X509TrustManager?): OkHttpClient.Builder {
+    if (sslFactory != null && trustManager != null) {
+        sslSocketFactory(sslFactory, trustManager)
     }
     return this
 }
@@ -47,7 +56,8 @@ fun createRetrofit(client: OkHttpClient, gson: Gson, url: String): Retrofit {
  * @param manager       用于接口地址切换的对象
  * @param interceptor   具体业务逻辑所需的拦截器
  */
-fun createOkHttpClient(manager: RetrofitUrlManager, vararg interceptor: Interceptor): OkHttpClient {
+fun createOkHttpClient(manager: RetrofitUrlManager, sslFactory: SSLSocketFactory?,
+                       trustManager: X509TrustManager?, vararg interceptor: Interceptor): OkHttpClient {
     val builder = OkHttpClient.Builder()
     if (Arch.debug) {
         val loggingInterceptor = HttpLoggingInterceptor()
@@ -57,6 +67,7 @@ fun createOkHttpClient(manager: RetrofitUrlManager, vararg interceptor: Intercep
     return builder.connectTimeout(20L, TimeUnit.SECONDS)
             .readTimeout(20L, TimeUnit.SECONDS)
             .writeTimeout(20L, TimeUnit.SECONDS)
+            .addSSLSocketFactory(sslFactory, trustManager)
             .addInterceptors(*interceptor)
             .addChangeUrlInterceptor(manager)
             .build()
