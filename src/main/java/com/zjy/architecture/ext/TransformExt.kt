@@ -21,7 +21,7 @@ private val HEX_DIGITS =
 /**
  * byte array to hex string
  */
-fun ByteArray.toHexString(): String {
+fun ByteArray.bytes2Hex(): String {
     val result = CharArray(size shl 1)
     var index = 0
     for (b in this) {
@@ -34,7 +34,7 @@ fun ByteArray.toHexString(): String {
 /**
  * hex string to byte array
  */
-fun String.hexToByteArray(): ByteArray {
+fun String.hex2Bytes(): ByteArray {
     var len = length
     var hexString = this
     if (len % 2 != 0) {

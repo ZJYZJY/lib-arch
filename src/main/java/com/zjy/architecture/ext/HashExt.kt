@@ -19,7 +19,7 @@ private fun hash(data: ByteArray, algorithm: Hash): ByteArray {
 }
 
 fun ByteArray.hash(algorithm: Hash): String {
-    return hash(this, algorithm).toHexString()
+    return hash(this, algorithm).bytes2Hex()
 }
 
 fun String.hash(algorithm: Hash, charset: Charset = Charset.forName("utf-8")): String {
@@ -27,22 +27,22 @@ fun String.hash(algorithm: Hash, charset: Charset = Charset.forName("utf-8")): S
 }
 
 fun ByteArray.md5Bytes(): ByteArray = hash(this, Hash.MD5)
-fun ByteArray.md5(): String = hash(this, Hash.MD5).toHexString()
+fun ByteArray.md5(): String = hash(this, Hash.MD5).bytes2Hex()
 fun String.md5(charset: Charset = Charset.forName("utf-8")): String = toByteArray(charset).md5()
 fun ByteArray.sha1Bytes(): ByteArray = hash(this, Hash.SHA1)
-fun ByteArray.sha1(): String = hash(this, Hash.SHA1).toHexString()
+fun ByteArray.sha1(): String = hash(this, Hash.SHA1).bytes2Hex()
 fun String.sha1(charset: Charset = Charset.forName("utf-8")): String = toByteArray(charset).sha1()
 fun ByteArray.sha224Bytes(): ByteArray = hash(this, Hash.SHA224)
-fun ByteArray.sha224(): String = hash(this, Hash.SHA224).toHexString()
+fun ByteArray.sha224(): String = hash(this, Hash.SHA224).bytes2Hex()
 fun String.sha224(charset: Charset = Charset.forName("utf-8")): String = toByteArray(charset).sha224()
 fun ByteArray.sha256Bytes(): ByteArray = hash(this, Hash.SHA256)
-fun ByteArray.sha256(): String = hash(this, Hash.SHA256).toHexString()
+fun ByteArray.sha256(): String = hash(this, Hash.SHA256).bytes2Hex()
 fun String.sha256(charset: Charset = Charset.forName("utf-8")): String = toByteArray(charset).sha256()
 fun ByteArray.sha384Bytes(): ByteArray = hash(this, Hash.SHA384)
-fun ByteArray.sha384(): String = hash(this, Hash.SHA384).toHexString()
+fun ByteArray.sha384(): String = hash(this, Hash.SHA384).bytes2Hex()
 fun String.sha384(charset: Charset = Charset.forName("utf-8")): String = toByteArray(charset).sha384()
 fun ByteArray.sha512Bytes(): ByteArray = hash(this, Hash.SHA512)
-fun ByteArray.sha512(): String = hash(this, Hash.SHA512).toHexString()
+fun ByteArray.sha512(): String = hash(this, Hash.SHA512).bytes2Hex()
 fun String.sha512(charset: Charset = Charset.forName("utf-8")): String = toByteArray(charset).sha512()
 
 fun File.hash(algorithm: Hash = Hash.SHA1): String {
@@ -60,7 +60,7 @@ fun File.hash(algorithm: Hash = Hash.SHA1): String {
         } while (len != -1)
         fin.close()
         val result = messageDigest.digest()
-        return result.toHexString()
+        return result.bytes2Hex()
     } catch (e: NoSuchAlgorithmException) {
         e.printStackTrace()
     } catch (e: FileNotFoundException) {
