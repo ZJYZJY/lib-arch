@@ -72,6 +72,12 @@ object Arch {
         this.debug = debug
         openXLog(context, debug, encryptKey)
         ActivityUtils.registerActivityLifecycleCallbacks(context as Application)
+        // 初始化ARouter
+        if (BuildConfig.DEBUG) {
+            ARouter.openLog()
+            ARouter.openDebug()
+        }
+        ARouter.init(context)
 
         // 初始化依赖注入
         startKoin {
