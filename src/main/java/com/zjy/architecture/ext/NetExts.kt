@@ -17,7 +17,10 @@ import javax.net.ssl.X509TrustManager
  * @since 2019/11/04
  * Description:创建[OkHttpClient]和[Retrofit]的方法
  */
-fun OkHttpClient.Builder.addChangeUrlInterceptor(manager: RetrofitUrlManager): OkHttpClient.Builder {
+fun OkHttpClient.Builder.addChangeUrlInterceptor(manager: RetrofitUrlManager?): OkHttpClient.Builder {
+    if (manager == null) {
+        return this
+    }
     return manager.with(this)
 }
 
@@ -56,7 +59,7 @@ fun createRetrofit(client: OkHttpClient, gson: Gson, url: String): Retrofit {
  * @param manager       用于接口地址切换的对象
  * @param interceptor   具体业务逻辑所需的拦截器
  */
-fun createOkHttpClient(manager: RetrofitUrlManager, sslFactory: SSLSocketFactory?,
+fun createOkHttpClient(manager: RetrofitUrlManager?, sslFactory: SSLSocketFactory?,
                        trustManager: X509TrustManager?, vararg interceptor: Interceptor): OkHttpClient {
     val builder = OkHttpClient.Builder()
     if (Arch.debug) {
