@@ -22,6 +22,12 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
     //自定义加载框
     open var dialog: LoadingDialog? = null
 
+    open fun setContentView() {
+        if (layoutId != 0) {
+            setContentView(layoutId)
+        }
+    }
+
     protected open fun setStatusBar() {
 
     }
@@ -34,9 +40,7 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (layoutId != 0) {
-            setContentView(layoutId)
-        }
+        setContentView()
         setStatusBar()
         initView()
         initData()
