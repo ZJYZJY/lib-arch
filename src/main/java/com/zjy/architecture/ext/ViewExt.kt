@@ -78,21 +78,29 @@ var <T : View> T.lastClickTime: Long
 
 inline fun <T : View> T.singleClick(time: Long = 500L, crossinline block: (T) -> Unit) {
     setOnClickListener {
-        val currentTimeMillis = System.currentTimeMillis()
-        if (currentTimeMillis - lastClickTime > time || this is Checkable) {
-            lastClickTime = currentTimeMillis
-            block(this)
-        }
+        checkSingle(time, block)
+    }
+}
+
+inline fun <T : View> T.checkSingle(time: Long = 500L, crossinline block: (T) -> Unit) {
+    val currentTimeMillis = System.currentTimeMillis()
+    if (currentTimeMillis - lastClickTime > time || this is Checkable) {
+        lastClickTime = currentTimeMillis
+        block(this)
     }
 }
 
 fun <T : View> T.singleClick(time: Long = 500L, listener: View.OnClickListener) {
     setOnClickListener {
-        val currentTimeMillis = System.currentTimeMillis()
-        if (currentTimeMillis - lastClickTime > time || this is Checkable) {
-            lastClickTime = currentTimeMillis
-            listener.onClick(this)
-        }
+        checkSingle(time, listener)
+    }
+}
+
+fun <T : View> T.checkSingle(time: Long = 500L, listener: View.OnClickListener) {
+    val currentTimeMillis = System.currentTimeMillis()
+    if (currentTimeMillis - lastClickTime > time || this is Checkable) {
+        lastClickTime = currentTimeMillis
+        listener.onClick(this)
     }
 }
 
