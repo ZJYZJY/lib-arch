@@ -47,10 +47,10 @@ fun OkHttpClient.Builder.addSSLSocketFactory(sslFactory: SSLSocketFactory?, trus
  */
 fun createRetrofit(client: OkHttpClient, gson: Gson, url: String): Retrofit {
     return Retrofit.Builder()
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl(url)
-            .build()
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .baseUrl(url)
+        .build()
 }
 
 /**
@@ -62,16 +62,16 @@ fun createRetrofit(client: OkHttpClient, gson: Gson, url: String): Retrofit {
 fun createOkHttpClient(manager: RetrofitUrlManager?, sslFactory: SSLSocketFactory?,
                        trustManager: X509TrustManager?, vararg interceptor: Interceptor): OkHttpClient {
     val builder = OkHttpClient.Builder()
+        .connectTimeout(20L, TimeUnit.SECONDS)
+        .readTimeout(20L, TimeUnit.SECONDS)
+        .writeTimeout(20L, TimeUnit.SECONDS)
+        .addSSLSocketFactory(sslFactory, trustManager)
+        .addInterceptors(*interceptor)
+        .addChangeUrlInterceptor(manager)
     if (Arch.debug) {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         builder.addInterceptor(loggingInterceptor)
     }
-    return builder.connectTimeout(20L, TimeUnit.SECONDS)
-            .readTimeout(20L, TimeUnit.SECONDS)
-            .writeTimeout(20L, TimeUnit.SECONDS)
-            .addSSLSocketFactory(sslFactory, trustManager)
-            .addInterceptors(*interceptor)
-            .addChangeUrlInterceptor(manager)
-            .build()
+    return builder.build()
 }
