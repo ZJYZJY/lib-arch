@@ -25,7 +25,7 @@ abstract class BaseFragment : Fragment(), Loadable, FragmentHandleBackInterface 
     @get:LayoutRes
     abstract val layoutId: Int
 
-    protected abstract fun initView(view: View?, savedInstanceState: Bundle?)
+    protected abstract fun initView(view: View, savedInstanceState: Bundle?)
 
     protected abstract fun initData()
 
