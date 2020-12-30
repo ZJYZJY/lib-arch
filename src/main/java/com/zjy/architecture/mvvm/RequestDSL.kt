@@ -68,12 +68,7 @@ fun <T> LoadingViewModel.request(
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e("LoadingViewModel", e.message)
-                    if (e is CancellationException) {
-                        // do nothing
-                    } else {
-                        processError(onFail, handleException(e))
-                    }
+                    processError(onFail, handleException(e))
                 } finally {
                     onComplete?.invoke()
                     if (loading) {
@@ -86,7 +81,11 @@ fun <T> LoadingViewModel.request(
 }
 
 private fun processError(onError: ((Throwable) -> Unit)? = null, e: Throwable) {
-    GlobalErrorHandler.handler?.invoke(e)
+    Log.e("LoadingViewModel", e.message)
+    if (e !is CancellationException && e.cause !is CancellationException) {
+        // 如果是协程取消，则不显示错误信息
+        GlobalErrorHandler.handler?.invoke(e)
+    }
     onError?.invoke(e)
 }
 
