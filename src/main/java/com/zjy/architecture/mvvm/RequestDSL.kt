@@ -1,11 +1,11 @@
 package com.zjy.architecture.mvvm
 
-import com.tencent.mars.xlog.Log
 import com.zjy.architecture.Arch
 import com.zjy.architecture.R
 import com.zjy.architecture.data.Result
 import com.zjy.architecture.ext.handleException
 import com.zjy.architecture.ext.toast
+import com.zjy.architecture.util.logE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -81,7 +81,7 @@ fun <T> LoadingViewModel.request(
 }
 
 private fun processError(onError: ((Throwable) -> Unit)? = null, e: Throwable) {
-    Log.e("LoadingViewModel", e.message)
+    logE("LoadingViewModel", e.message)
     if (e !is CancellationException && e.cause !is CancellationException) {
         // 如果是协程取消，则不显示错误信息
         GlobalErrorHandler.handler?.invoke(e)

@@ -9,6 +9,7 @@ import java.io.Serializable
  * Description:网络请求结果
  */
 class HttpResult<T>(
+    @SerializedName(value = "code", alternate = ["result"])
     val code: Int,
     @SerializedName(value = "message", alternate = ["msg"])
     val message: String?,

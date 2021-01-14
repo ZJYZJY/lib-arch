@@ -9,6 +9,7 @@ import com.tencent.mars.xlog.Log
 import com.tencent.mars.xlog.Xlog
 import com.zjy.architecture.di.Injector
 import com.zjy.architecture.util.ActivityUtils
+import com.zjy.architecture.util.CrashHandler
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.KoinApplication
@@ -71,6 +72,7 @@ object Arch {
         this.mContext = context.applicationContext
         this.debug = debug
         openXLog(context, debug, encryptKey)
+        CrashHandler.init(context)
         ActivityUtils.registerActivityLifecycleCallbacks(context as Application)
         // 初始化ARouter
         if (BuildConfig.DEBUG) {
@@ -130,15 +132,15 @@ object Arch {
 
         if (debug) {
             Xlog.appenderOpen(
-                    Xlog.LEVEL_VERBOSE, Xlog.AppednerModeAsync, "", logPath,
-                    "DEBUG_$logFileName", 0, ""
+                Xlog.LEVEL_VERBOSE, Xlog.AppednerModeAsync, "", logPath,
+                "DEBUG_$logFileName", 0, ""
             )
             Xlog.setConsoleLogOpen(true)
-            Log.setLogImp(Xlog())
+            Log.setLevel(Log.LEVEL_VERBOSE, false)
         } else if (encryptKey.isNotEmpty()) {
             Xlog.appenderOpen(
-                    Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
-                    logFileName, 0, encryptKey
+                Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
+                logFileName, 0, encryptKey
             )
             Xlog.setConsoleLogOpen(false)
             Log.setLogImp(Xlog())

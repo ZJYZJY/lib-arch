@@ -1,7 +1,7 @@
 package com.zjy.architecture.ext
 
 import android.annotation.SuppressLint
-import com.tencent.mars.xlog.Log
+import com.zjy.architecture.util.logV
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,7 +14,7 @@ inline fun <reified T, R> T.tryWith(crossinline block: () -> R): R? {
     return try {
         block()
     } catch (e: Exception) {
-        Log.e(T::class.java.name, e.message)
+        logV(T::class.java.name, e.message)
         null
     }
 }

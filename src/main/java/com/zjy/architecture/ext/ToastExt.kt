@@ -18,6 +18,7 @@ fun Context.toast(@StringRes res: Int, duration: Int = Toast.LENGTH_SHORT, confi
         config?.invoke(this)
         show()
     }
+    sToast = null
 }
 
 fun Context.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
@@ -26,6 +27,7 @@ fun Context.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, con
         config?.invoke(this)
         show()
     }
+    sToast = null
 }
 
 fun Fragment.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
@@ -35,6 +37,7 @@ fun Fragment.toast(content: CharSequence, duration: Int = Toast.LENGTH_SHORT, co
         config?.invoke(this)
         show()
     }
+    sToast = null
 }
 
 fun Fragment.toast(@StringRes res: Int, duration: Int = Toast.LENGTH_SHORT, config: (Toast.() -> Unit)? = null) {
@@ -44,12 +47,15 @@ fun Fragment.toast(@StringRes res: Int, duration: Int = Toast.LENGTH_SHORT, conf
         config?.invoke(this)
         show()
     }
+    sToast = null
 }
 
 fun Fragment.cancelToast() {
     sToast?.cancel()
+    sToast = null
 }
 
 fun Context.cancelToast() {
     sToast?.cancel()
+    sToast = null
 }

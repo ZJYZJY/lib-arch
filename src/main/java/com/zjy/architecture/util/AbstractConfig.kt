@@ -27,7 +27,7 @@ abstract class AbstractConfig(fileName: String, context: Context = Arch.context)
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            Log.d(this.javaClass.simpleName, "打开配置文件失败：${fileName}")
+            logD("打开配置文件失败：${fileName}")
         }
     }
 
