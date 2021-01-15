@@ -193,7 +193,6 @@ deps.flexbox = "com.google.android:flexbox:$versions.flexbox"
 deps.zxing_lite = "com.king.zxing:zxing-lite:$versions.zxing_lite"
 // LeakCanary内存泄漏检测
 deps.leak_canary = "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
-deps.leak_canary_no_op = "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leak_canary"
 
 
 
