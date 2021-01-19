@@ -39,3 +39,16 @@ val Context.longVersionCode: Long
             0L
         }
     }
+
+val Context.versionCodeCompat: Long
+    get() {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageManager.getPackageInfo(packageName, 0).longVersionCode
+            } else {
+                packageManager.getPackageInfo(packageName, 0).versionCode.toLong()
+            }
+        } catch (e: Exception) {
+            0L
+        }
+    }

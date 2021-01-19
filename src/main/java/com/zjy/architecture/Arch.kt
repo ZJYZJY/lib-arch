@@ -72,7 +72,7 @@ object Arch {
         this.mContext = context.applicationContext
         this.debug = debug
         openXLog(context, debug, encryptKey)
-        CrashHandler.init(context)
+        CrashHandler.init(context, debug)
         ActivityUtils.registerActivityLifecycleCallbacks(context as Application)
         // 初始化ARouter
         if (BuildConfig.DEBUG) {
@@ -99,6 +99,7 @@ object Arch {
      */
     @JvmStatic
     fun release() {
+        Log.appenderFlushSync(true)
         Log.appenderClose()
         stopKoin()
     }
@@ -131,19 +132,21 @@ object Arch {
             "Arch_${processName.substring(processName.indexOf(":") + 1)}"
 
         if (debug) {
-            Xlog.appenderOpen(
-                Xlog.LEVEL_VERBOSE, Xlog.AppednerModeAsync, "", logPath,
-                "DEBUG_$logFileName", 0, ""
+            Xlog.open(
+                false, Xlog.LEVEL_VERBOSE, Xlog.AppednerModeAsync, "", logPath,
+                "DEBUG_$logFileName", ""
             )
-            Xlog.setConsoleLogOpen(true)
-            Log.setLevel(Log.LEVEL_VERBOSE, false)
-        } else if (encryptKey.isNotEmpty()) {
-            Xlog.appenderOpen(
-                Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
-                logFileName, 0, encryptKey
-            )
-            Xlog.setConsoleLogOpen(false)
             Log.setLogImp(Xlog())
+            Log.setConsoleLogOpen(true)
+            Log.appenderFlush()
+        } else if (encryptKey.isNotEmpty()) {
+            Xlog.open(
+                false, Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
+                logFileName, encryptKey
+            )
+            Log.setLogImp(Xlog())
+            Log.setConsoleLogOpen(false)
+            Log.appenderFlush()
         }
     }
 }
