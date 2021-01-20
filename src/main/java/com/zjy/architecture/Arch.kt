@@ -99,7 +99,7 @@ object Arch {
      */
     @JvmStatic
     fun release() {
-        Log.appenderFlushSync(true)
+        Log.appenderFlush(true)
         Log.appenderClose()
         stopKoin()
     }
@@ -132,21 +132,21 @@ object Arch {
             "Arch_${processName.substring(processName.indexOf(":") + 1)}"
 
         if (debug) {
-            Xlog.open(
-                false, Xlog.LEVEL_VERBOSE, Xlog.AppednerModeAsync, "", logPath,
-                "DEBUG_$logFileName", ""
+            Xlog.appenderOpen(
+                Xlog.LEVEL_VERBOSE, Xlog.AppednerModeAsync, "", logPath,
+                "DEBUG_$logFileName", 0, ""
             )
-            Log.setLogImp(Xlog())
-            Log.setConsoleLogOpen(true)
-            Log.appenderFlush()
+            Xlog.setConsoleLogOpen(true)
+            Log.setLevel(Log.LEVEL_VERBOSE, false)
+            Log.appenderFlush(false)
         } else if (encryptKey.isNotEmpty()) {
-            Xlog.open(
-                false, Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
-                logFileName, encryptKey
+            Xlog.appenderOpen(
+                Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath,
+                logFileName, 0, encryptKey
             )
+            Xlog.setConsoleLogOpen(false)
             Log.setLogImp(Xlog())
-            Log.setConsoleLogOpen(false)
-            Log.appenderFlush()
+            Log.appenderFlush(false)
         }
     }
 }

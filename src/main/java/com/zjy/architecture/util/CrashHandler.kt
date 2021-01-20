@@ -65,14 +65,8 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         pw.close()
         sb.append(writer.toString())
 
-        val crashPath = "${mContext.getExternalFilesDir("")}/arch/crash"
-        Log.openLogInstance(Xlog.LEVEL_ERROR, Xlog.AppednerModeAsync, "", crashPath, NAME_PREFIX, 0)
-        Log.getLogInstance(NAME_PREFIX).apply {
-            setConsoleLogOpen(debug)
-            e("${TAG}Crash", "\n$sb")
-            appenderFlushSync()
-        }
-        Log.appenderFlush()
+        logE("${TAG}Crash", "\n$sb")
+        Log.appenderFlush(true)
         Log.appenderClose()
     }
 }
