@@ -44,6 +44,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
     private fun saveErrorMessages(e: Throwable?) {
         if (e == null) return
         val sb = StringBuilder()
+        sb.append("\n")
         sb.append("VERSION_CODE        :${mContext.versionCodeCompat}\n")
         sb.append("VERSION_NAME        :${mContext.versionName}\n")
         sb.append("VERSION.SDK_INT     :${Build.VERSION.SDK_INT}\n")
