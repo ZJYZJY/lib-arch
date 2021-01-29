@@ -94,6 +94,35 @@ object FileUtils {
             Uri.fromFile(file)
         }
     }
+
+    fun getExtension(context: Context, uri: Uri?): String {
+        if (uri == null) return ""
+        val ext = tryWith {
+            context.contentResolver.query(
+                uri,
+                arrayOf(MediaStore.MediaColumns.DISPLAY_NAME),
+                null,
+                null,
+                null
+            )?.use {
+                if (it.moveToFirst()) {
+                    it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME));
+                } else {
+                    null
+                }
+            }
+        }
+        if (ext == null) {
+            val document = DocumentFile.fromSingleUri(context, uri)
+            if (document?.type == null) {
+                throw IllegalArgumentException("uri must be a file not a directory")
+            }
+            return MimeTypeMap.getSingleton().getExtensionFromMimeType(document.type) ?: ""
+        }
+        return ext
+    }
+
+    fun getExtension(path: String?): String = path?.split(".")?.lastOrNull() ?: ""
 }
 
 fun File.toUri(context: Context, authority: String): Uri {
