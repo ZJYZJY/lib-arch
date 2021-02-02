@@ -41,7 +41,13 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView()
-        setStatusBar()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            if (!isInMultiWindowMode && !isInPictureInPictureMode) {
+                setStatusBar()
+            }
+        } else {
+            setStatusBar()
+        }
         initView()
         initData()
         setEvent()
@@ -73,7 +79,7 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
     }
 
     override fun onBackPressed() {
-        if(!FragmentHandleBackUtil.handleBackPress(this)) {
+        if (!FragmentHandleBackUtil.handleBackPress(this)) {
             onBackPressedSupport()
         }
     }
