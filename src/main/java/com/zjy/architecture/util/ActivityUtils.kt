@@ -34,7 +34,7 @@ object ActivityUtils {
                 activityStop()
             }
 
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
             override fun onActivityDestroyed(activity: Activity) {
                 unRegisterActivity(activity)
             }
