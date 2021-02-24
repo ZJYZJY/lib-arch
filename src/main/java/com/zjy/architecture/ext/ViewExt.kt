@@ -66,7 +66,7 @@ fun TextView.mediumText(res: Int) {
 /**
  * Reverse the view's visibility
  */
-inline fun View.reverseVisibility(needInvisible: Boolean = true) {
+inline fun View.reverseVisibility(needInvisible: Boolean = false) {
     if (isVisible) {
         if (needInvisible) invisible() else gone()
     } else visible()
