@@ -10,7 +10,8 @@ import kotlin.reflect.KProperty
 class PreferenceDelegate<T>(
     private val key: String,
     private val value: T,
-    private val sp: IStorage = DefaultPreference.instance
+    private val sp: IStorage = DefaultPreference.instance,
+    private val sync: Boolean = false
 ) {
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
@@ -18,7 +19,7 @@ class PreferenceDelegate<T>(
     }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        sp.putValue(key, value)
+        sp.putValue(key, value, sync)
     }
 }
 
@@ -45,7 +46,7 @@ interface Preference {
         return sp.getValue(key, defaultValue)
     }
 
-    operator fun <T> set(key: String, value: T) {
-        sp.putValue(key, value)
+    operator fun <T> set(key: String, sync: Boolean = false, value: T) {
+        sp.putValue(key, value, sync)
     }
 }

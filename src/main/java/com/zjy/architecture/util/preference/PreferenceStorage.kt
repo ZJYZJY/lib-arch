@@ -10,7 +10,10 @@ import com.zjy.architecture.Arch
  * @since 2020/07/15
  * Description:SharedPreferences存储
  */
-class PreferenceStorage(private val sp: SharedPreferences) : IStorage {
+class PreferenceStorage(
+    private val sp: SharedPreferences,
+    private val globalSync: Boolean = false
+) : IStorage {
 
     override fun <T> getValue(name: String, default: T): T = with(sp) {
         val res: Any = when (default) {
@@ -25,7 +28,7 @@ class PreferenceStorage(private val sp: SharedPreferences) : IStorage {
         res as T
     }
 
-    override fun <T> putValue(name: String, value: T) = sp.edit {
+    override fun <T> putValue(name: String, value: T, sync: Boolean) = sp.edit(globalSync or sync) {
         when (value) {
             is Long -> putLong(name, value)
             is String -> putString(name, value)
@@ -46,8 +49,8 @@ internal class DefaultPreference {
 
         val instance by lazy {
             val shared = Arch.context.getSharedPreferences(
-                    "${Arch.context.packageName}.sharedpreference",
-                    Context.MODE_PRIVATE
+                "${Arch.context.packageName}.default_preference",
+                Context.MODE_PRIVATE
             )
             PreferenceStorage(shared)
         }

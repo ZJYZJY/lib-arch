@@ -9,5 +9,5 @@ interface IStorage {
 
     fun <T> getValue(name: String, default: T): T
 
-    fun <T> putValue(name: String, value: T)
+    fun <T> putValue(name: String, value: T, sync: Boolean)
 }

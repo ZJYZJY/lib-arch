@@ -1,5 +1,6 @@
 package com.zjy.architecture
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
@@ -22,6 +23,7 @@ import org.koin.core.logger.Level
  * @since 2020/05/21
  * Description:
  */
+@SuppressLint("StaticFieldLeak")
 object Arch {
 
     /**
