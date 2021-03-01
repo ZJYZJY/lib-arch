@@ -42,6 +42,8 @@ suspend fun <T> apiCall(code: Int = SUCCESS_CODE, call: suspend () -> HttpResult
 fun handleException(t: Exception?): ApiException {
     return if (t == null) {
         ApiException(UNKNOWN_ERROR)
+    } else if (t is ApiException) {
+        t
     } else if (t is CertificateException || t is SSLHandshakeException) {
         ApiException(CERT_ERROR)
     } else if (t is MalformedURLException || t is UnknownHostException) {
@@ -60,8 +62,6 @@ fun handleException(t: Exception?): ApiException {
         ApiException(PARSE_ERROR)
     } else if (t is ClassCastException) {
         ApiException(STRUCTURE_ERROR)
-    } else if (t is ApiException) {
-        t
     } else {
         ApiException(t)
     }
