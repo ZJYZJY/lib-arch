@@ -2,16 +2,24 @@ package com.zjy.architecture.util
 
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
+import android.os.CancellationSignal
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresPermission
 import androidx.annotation.WorkerThread
 import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
 import androidx.documentfile.provider.DocumentFile
+import com.zjy.architecture.ext.bytes2Hex
 import com.zjy.architecture.ext.tryWith
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.security.MessageDigest
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * @author zhengjy
@@ -72,6 +80,34 @@ object FileUtils {
         return createCacheFile(context, mimeType).toUri(context, authority)
     }
 
+    suspend fun queryFile(context: Context, uri: Uri?) = suspendCancellableCoroutine<Bundle?> { cont ->
+        if (uri == null) {
+            cont.resume(null)
+            return@suspendCancellableCoroutine
+        }
+        val signal = CancellationSignal()
+        cont.invokeOnCancellation {
+            signal.cancel()
+        }
+        try {
+            context.contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE),
+                null, null, null, signal)?.use {
+                if (it.moveToFirst()) {
+                    val name = it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                    val size = it.getInt(it.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
+                    cont.resume(bundleOf(
+                        MediaStore.MediaColumns.DISPLAY_NAME to name,
+                        MediaStore.MediaColumns.SIZE to size
+                    ))
+                } else {
+                    cont.resume(null)
+                }
+            } ?: cont.resume(null)
+        } catch (e: Exception) {
+            cont.resumeWithException(e)
+        }
+    }
+
     /**
      * 根据mime类型，创建一个缓存文件File
      */
@@ -92,6 +128,23 @@ object FileUtils {
             FileProvider.getUriForFile(context, authority, file)
         } else {
             Uri.fromFile(file)
+        }
+    }
+
+    fun getMd5(context: Context, uri: Uri?): String {
+        if (uri == null) return ""
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                val digest = MessageDigest.getInstance("MD5")
+                var buffer = input.readBytes()
+                while (buffer.isNotEmpty()) {
+                    digest.update(buffer, 0, buffer.size)
+                    buffer = input.readBytes()
+                }
+                digest.digest().bytes2Hex()
+            } ?: ""
+        } catch (e: Exception) {
+            ""
         }
     }
 
