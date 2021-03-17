@@ -90,8 +90,8 @@ object FileUtils {
             signal.cancel()
         }
         try {
-            context.contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE),
-                null, null, null, signal)?.use {
+            // 默认查询返回name和size字段
+            context.contentResolver.query(uri, null, null, null, null, signal)?.use {
                 if (it.moveToFirst()) {
                     val name = it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
                     val size = it.getInt(it.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
@@ -146,33 +146,6 @@ object FileUtils {
         } catch (e: Exception) {
             ""
         }
-    }
-
-    fun getExtension(context: Context, uri: Uri?): String {
-        if (uri == null) return ""
-        val ext = tryWith {
-            context.contentResolver.query(
-                uri,
-                arrayOf(MediaStore.MediaColumns.DISPLAY_NAME),
-                null,
-                null,
-                null
-            )?.use {
-                if (it.moveToFirst()) {
-                    it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME));
-                } else {
-                    null
-                }
-            }
-        }
-        if (ext == null) {
-            val document = DocumentFile.fromSingleUri(context, uri)
-            if (document?.type == null) {
-                throw IllegalArgumentException("uri must be a file not a directory")
-            }
-            return MimeTypeMap.getSingleton().getExtensionFromMimeType(document.type) ?: ""
-        }
-        return ext
     }
 
     fun getExtension(path: String?): String = path?.split(".")?.lastOrNull() ?: ""
