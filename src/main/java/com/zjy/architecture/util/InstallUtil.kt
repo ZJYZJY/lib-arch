@@ -35,13 +35,28 @@ object InstallUtil {
             else -> startInstall(context, file)
         }
     }
+    fun install(context: Context, apkUri: Uri) {
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> startInstallO(context, apkUri)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> startInstallN(context, apkUri)
+            else -> startInstall(context, apkUri)
+        }
+    }
 
     /**
      * android1.x-6.x
      */
     private fun startInstall(context: Context, file: File) {
+        val apkUri = Uri.fromFile(file)
+        startInstall(context, apkUri)
+    }
+
+    /**
+     * android1.x-6.x
+     */
+    private fun startInstall(context: Context, apkUri: Uri) {
         val install = Intent(Intent.ACTION_VIEW)
-        install.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive")
+        install.setDataAndType(apkUri, "application/vnd.android.package-archive")
         install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(install)
     }
@@ -53,6 +68,14 @@ object InstallUtil {
     private fun startInstallN(context: Context, file: File, authority: String) {
         // authority是指在AndroidManifest中的android:authorities值
         val apkUri = FileProvider.getUriForFile(context, authority, file)
+        startInstallN(context, apkUri)
+    }
+
+    /**
+     * android7.x
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private fun startInstallN(context: Context, apkUri: Uri) {
         val install = Intent(Intent.ACTION_VIEW)
         // 由于没有在Activity环境下启动Activity,设置下面的标签
         install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -70,6 +93,33 @@ object InstallUtil {
         val isGranted = context.packageManager.canRequestPackageInstalls()
         if (isGranted) {
             startInstallN(context, file, authority)
+        } else {
+            AlertDialog.Builder(context)
+                .setCancelable(false)
+                .setTitle(context.getString(R.string.arch_request_install_unknown))
+                .setPositiveButton(
+                    context.getString(R.string.arch_confirm)
+                ) { _, _ ->
+                    val intent = Intent()
+                    intent.data = Uri.parse("package:" + context.packageName)
+                    intent.action = Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES
+                    (context as Activity).startActivityForResult(
+                        intent,
+                        UNKNOWN_CODE
+                    )
+                }
+                .show()
+        }
+    }
+
+    /**
+     * android8.x
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private fun startInstallO(context: Context, apkUri: Uri) {
+        val isGranted = context.packageManager.canRequestPackageInstalls()
+        if (isGranted) {
+            startInstallN(context, apkUri)
         } else {
             AlertDialog.Builder(context)
                 .setCancelable(false)
