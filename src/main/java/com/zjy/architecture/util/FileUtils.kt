@@ -16,6 +16,7 @@ import com.zjy.architecture.ext.tryWith
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.BufferedOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.security.MessageDigest
 import kotlin.coroutines.resume
@@ -145,6 +146,31 @@ object FileUtils {
             } ?: ""
         } catch (e: Exception) {
             ""
+        }
+    }
+
+    fun getMd5(path: String?): String {
+        if (path == null) return ""
+        return try {
+            FileInputStream(path).use { input ->
+                val digest = MessageDigest.getInstance("MD5")
+                var buffer = input.readBytes()
+                while (buffer.isNotEmpty()) {
+                    digest.update(buffer, 0, buffer.size)
+                    buffer = input.readBytes()
+                }
+                digest.digest().bytes2Hex()
+            }
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    fun fileExists(context: Context, url: String): Boolean {
+        return if (url.startsWith("content://")) {
+            DocumentFile.fromSingleUri(context, Uri.parse(url))?.exists() ?: false
+        } else {
+            File(url).exists()
         }
     }
 
