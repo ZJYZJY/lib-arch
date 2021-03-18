@@ -9,6 +9,7 @@ import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresPermission
 import androidx.annotation.WorkerThread
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.documentfile.provider.DocumentFile
 import com.zjy.architecture.ext.bytes2Hex
@@ -81,34 +82,6 @@ object FileUtils {
         return createCacheFile(context, mimeType).toUri(context, authority)
     }
 
-    suspend fun queryFile(context: Context, uri: Uri?) = suspendCancellableCoroutine<Bundle?> { cont ->
-        if (uri == null) {
-            cont.resume(null)
-            return@suspendCancellableCoroutine
-        }
-        val signal = CancellationSignal()
-        cont.invokeOnCancellation {
-            signal.cancel()
-        }
-        try {
-            // 默认查询返回name和size字段
-            context.contentResolver.query(uri, null, null, null, null, signal)?.use {
-                if (it.moveToFirst()) {
-                    val name = it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
-                    val size = it.getInt(it.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
-                    cont.resume(bundleOf(
-                        MediaStore.MediaColumns.DISPLAY_NAME to name,
-                        MediaStore.MediaColumns.SIZE to size
-                    ))
-                } else {
-                    cont.resume(null)
-                }
-            } ?: cont.resume(null)
-        } catch (e: Exception) {
-            cont.resumeWithException(e)
-        }
-    }
-
     /**
      * 根据mime类型，创建一个缓存文件File
      */
@@ -132,34 +105,65 @@ object FileUtils {
         }
     }
 
-    fun getMd5(context: Context, uri: Uri?): String {
-        if (uri == null) return ""
-        return try {
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                val digest = MessageDigest.getInstance("MD5")
-                var buffer = input.readBytes()
-                while (buffer.isNotEmpty()) {
-                    digest.update(buffer, 0, buffer.size)
-                    buffer = input.readBytes()
-                }
-                digest.digest().bytes2Hex()
-            } ?: ""
-        } catch (e: Exception) {
-            ""
+    suspend fun queryFile(context: Context, path: String?) = suspendCancellableCoroutine<Bundle?> { cont ->
+        if (path.isNullOrEmpty()) {
+            cont.resume(null)
+            return@suspendCancellableCoroutine
+        }
+        if (path.isContent()) {
+            val uri = path.toUri()
+            val signal = CancellationSignal()
+            cont.invokeOnCancellation {
+                signal.cancel()
+            }
+            try {
+                // 默认查询返回name和size字段
+                context.contentResolver.query(uri, null, null, null, null, signal)?.use {
+                    if (it.moveToFirst()) {
+                        val name = it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                        val size = it.getInt(it.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
+                        cont.resume(bundleOf(
+                            MediaStore.MediaColumns.DISPLAY_NAME to name,
+                            MediaStore.MediaColumns.SIZE to size
+                        ))
+                    } else {
+                        cont.resume(null)
+                    }
+                } ?: cont.resume(null)
+            } catch (e: Exception) {
+                cont.resumeWithException(e)
+            }
+        } else {
+            cont.resume(bundleOf(
+                MediaStore.MediaColumns.DISPLAY_NAME to File(path).name,
+                MediaStore.MediaColumns.SIZE to File(path).length()
+            ))
         }
     }
 
-    fun getMd5(path: String?): String {
-        if (path == null) return ""
+    fun getMd5(context: Context, path: String?): String {
+        if (path.isNullOrEmpty()) return ""
         return try {
-            FileInputStream(path).use { input ->
-                val digest = MessageDigest.getInstance("MD5")
-                var buffer = input.readBytes()
-                while (buffer.isNotEmpty()) {
-                    digest.update(buffer, 0, buffer.size)
-                    buffer = input.readBytes()
+            if (path.isContent()) {
+                context.contentResolver.openInputStream(path.toUri())?.use { input ->
+                    val digest = MessageDigest.getInstance("MD5")
+                    var buffer = input.readBytes()
+                    while (buffer.isNotEmpty()) {
+                        digest.update(buffer, 0, buffer.size)
+                        buffer = input.readBytes()
+                    }
+                    digest.digest().bytes2Hex()
+                } ?: ""
+            } else {
+                FileInputStream(path).use { input ->
+                    val digest = MessageDigest.getInstance("MD5")
+                    var buffer = input.readBytes()
+                    while (buffer.isNotEmpty()) {
+                        digest.update(buffer, 0, buffer.size)
+                        buffer = input.readBytes()
+                    }
+                    digest.digest().bytes2Hex()
                 }
-                digest.digest().bytes2Hex()
             }
         } catch (e: Exception) {
             ""
@@ -167,8 +171,8 @@ object FileUtils {
     }
 
     fun fileExists(context: Context, url: String): Boolean {
-        return if (url.startsWith("content://")) {
-            DocumentFile.fromSingleUri(context, Uri.parse(url))?.exists() ?: false
+        return if (url.isContent()) {
+            DocumentFile.fromSingleUri(context, url.toUri())?.exists() ?: false
         } else {
             File(url).exists()
         }
@@ -180,3 +184,7 @@ object FileUtils {
 fun File.toUri(context: Context, authority: String): Uri {
     return FileUtils.file2Uri(context, this, authority)
 }
+
+const val CONTENT_URI = "content://"
+
+fun String?.isContent() = this?.startsWith(CONTENT_URI) ?: false
