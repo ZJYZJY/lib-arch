@@ -1,36 +1,14 @@
-/*
- * This file is part of Siebe Projects samples.
- *
- * Siebe Projects samples is free software: you can redistribute it and/or modify
- * it under the terms of the Lesser GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Siebe Projects samples is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * Lesser GNU General Public License for more details.
- *
- * You should have received a copy of the Lesser GNU General Public License
- * along with Siebe Projects samples.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.zjy.architecture.util;
-
-import android.app.Activity;
 
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-
 import android.view.WindowManager.LayoutParams;
-
 import android.widget.PopupWindow;
 
 import androidx.fragment.app.FragmentActivity;
@@ -39,7 +17,6 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import com.zjy.architecture.R;
-
 
 /**
  * The keyboard height provider, this class uses a PopupWindow
@@ -50,7 +27,7 @@ public class KeyboardHeightProvider extends PopupWindow implements LifecycleObse
     /**
      * The tag for logging purposes
      */
-    private final static String TAG = "sample_KeyboardHeightProvider";
+    private final static String TAG = "KeyboardHeightProvider";
 
     /**
      * The keyboard height observer
@@ -58,31 +35,21 @@ public class KeyboardHeightProvider extends PopupWindow implements LifecycleObse
     private KeyboardHeightObserver observer;
 
     /**
-     * The cached landscape height of the keyboard
-     */
-    private int keyboardLandscapeHeight;
-
-    /**
-     * The cached portrait height of the keyboard
-     */
-    private int keyboardPortraitHeight;
-
-    /**
      * The view that is used to calculate the keyboard height
      */
-    private View popupView;
+    private final View popupView;
 
     /**
      * The parent view
      */
-    private View parentView;
+    private final View parentView;
 
     /**
      * The root activity that uses this KeyboardHeightProvider
      */
-    private Activity activity;
+    private final FragmentActivity activity;
 
-    private OnGlobalLayoutListener onGlobalLayoutListener = new OnGlobalLayoutListener() {
+    private final OnGlobalLayoutListener onGlobalLayoutListener = new OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
             if (popupView != null) {
@@ -120,7 +87,9 @@ public class KeyboardHeightProvider extends PopupWindow implements LifecycleObse
      * of the Activity.
      */
     public void start() {
-        if (!isShowing() && parentView.getWindowToken() != null) {
+        if (activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)
+                && !isShowing()
+                && parentView.getWindowToken() != null) {
             setBackgroundDrawable(new ColorDrawable(0));
             showAtLocation(parentView, Gravity.NO_GRAVITY, 0, 0);
         }
@@ -142,6 +111,7 @@ public class KeyboardHeightProvider extends PopupWindow implements LifecycleObse
      */
     @OnLifecycleEvent(value = Lifecycle.Event.ON_DESTROY)
     public void close() {
+        dismiss();
         observer = null;
     }
 
@@ -178,11 +148,15 @@ public class KeyboardHeightProvider extends PopupWindow implements LifecycleObse
         if (keyboardHeight == 0) {
             notifyKeyboardHeightChanged(0, orientation);
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            this.keyboardPortraitHeight = keyboardHeight;
-            notifyKeyboardHeightChanged(keyboardPortraitHeight, orientation);
+            /*
+             * The cached portrait height of the keyboard
+             */
+            notifyKeyboardHeightChanged(keyboardHeight, orientation);
         } else {
-            this.keyboardLandscapeHeight = keyboardHeight;
-            notifyKeyboardHeightChanged(keyboardLandscapeHeight, orientation);
+            /*
+             * The cached landscape height of the keyboard
+             */
+            notifyKeyboardHeightChanged(keyboardHeight, orientation);
         }
     }
 
