@@ -170,7 +170,8 @@ object FileUtils {
         }
     }
 
-    fun fileExists(context: Context, url: String): Boolean {
+    fun fileExists(context: Context, url: String?): Boolean {
+        if (url.isNullOrEmpty()) return false
         return if (url.isContent()) {
             DocumentFile.fromSingleUri(context, url.toUri())?.exists() ?: false
         } else {
