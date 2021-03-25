@@ -13,6 +13,8 @@ import java.io.IOException
 class ApiException : IOException {
 
     private var errorCode: Int = IGNORE_ERROR
+    val code: Int
+        get() = errorCode
 
     /**
      * 动态指定message

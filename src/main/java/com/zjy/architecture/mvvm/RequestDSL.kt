@@ -2,7 +2,9 @@ package com.zjy.architecture.mvvm
 
 import com.zjy.architecture.Arch
 import com.zjy.architecture.R
+import com.zjy.architecture.data.IGNORE_ERROR
 import com.zjy.architecture.data.Result
+import com.zjy.architecture.exception.ApiException
 import com.zjy.architecture.ext.handleException
 import com.zjy.architecture.ext.toast
 import com.zjy.architecture.util.logE
@@ -82,7 +84,8 @@ fun <T> LoadingViewModel.request(
 
 private fun processError(onError: ((Throwable) -> Unit)? = null, e: Throwable) {
     logE("LoadingViewModel", e.message)
-    if (e !is CancellationException && e.cause !is CancellationException) {
+    val ignore = e is ApiException && e.code == IGNORE_ERROR
+    if (e !is CancellationException && e.cause !is CancellationException && !ignore) {
         // 如果是协程取消，则不显示错误信息
         GlobalErrorHandler.handler?.invoke(e)
     }
