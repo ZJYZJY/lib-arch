@@ -1,9 +1,12 @@
 package com.zjy.architecture.util
 
+import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.CancellationSignal
+import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresPermission
@@ -14,11 +17,10 @@ import androidx.core.os.bundleOf
 import androidx.documentfile.provider.DocumentFile
 import com.zjy.architecture.ext.bytes2Hex
 import com.zjy.architecture.ext.tryWith
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import kotlinx.coroutines.withContext
+import java.io.*
 import java.security.MessageDigest
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -180,6 +182,124 @@ object FileUtils {
     }
 
     fun getExtension(path: String?): String = path?.split(".")?.lastOrNull() ?: ""
+
+    @SuppressLint("InlinedApi")
+    fun createPictureUri(context: Context, folder: String, fileName: String): Uri? {
+        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            .absolutePath + "/" + folder
+        val resolver = context.contentResolver
+        //设置文件参数到ContentValues中
+        val values = ContentValues().apply {
+            //设置文件名
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            //设置文件类型
+            put(MediaStore.MediaColumns .MIME_TYPE, "image/jpeg")
+            //注意：MediaStore.Images.Media.RELATIVE_PATH需要targetSdkVersion=29,
+            //故该方法只可在Android10的手机上执行
+            if (isAndroidQ) {
+                put(
+                    MediaStore.MediaColumns.RELATIVE_PATH,
+                    "${Environment.DIRECTORY_PICTURES}/$folder"
+                )
+            } else {
+                put(MediaStore.MediaColumns.DATA, "$path/$fileName")
+            }
+        }
+        if (!isAndroidQ) {
+            // android10以下可能需要手动创建文件夹
+            val dir = File(path)
+            if (!dir.exists()) {
+                dir.mkdirs()
+            }
+        }
+        val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        //insertUri表示文件保存的uri路径
+        return resolver.insert(external, values)
+    }
+
+    @SuppressLint("InlinedApi")
+    suspend fun saveInMediaStore(
+        context: Context,
+        media: InputStream?,
+        folder: String,
+        fileName: String,
+        mimeType: String,
+        progressCallback: ((Float) -> Unit)? = null
+    ): Uri? = withContext(Dispatchers.IO) {
+        if (folder.isEmpty() || media == null) {
+            return@withContext null
+        }
+        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            .absolutePath + "/" + folder
+        val resolver = context.contentResolver
+        //设置文件参数到ContentValues中
+        val values = ContentValues().apply {
+            //设置文件名
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            //设置文件类型
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            //注意：MediaStore.MediaColumns.RELATIVE_PATH需要targetSdkVersion=29,
+            //故该方法只可在Android10的手机上执行
+            if (isAndroidQ) {
+                put(
+                    MediaStore.MediaColumns.RELATIVE_PATH,
+                    "${Environment.DIRECTORY_PICTURES}/$folder"
+                )
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            } else {
+                put(MediaStore.MediaColumns.DATA, "$path/$fileName")
+            }
+        }
+        val external = when {
+            mimeType.startsWith("image/") -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            mimeType.startsWith("video/") -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            mimeType.startsWith("audio/") -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            else -> return@withContext null
+        }
+        //insertUri表示文件保存的uri路径
+        val insertUri = resolver.insert(external, values)
+        if (insertUri != null) {
+            try {
+                if (!isAndroidQ) {
+                    // android10以下可能需要手动创建文件夹
+                    val dir = File(path)
+                    if (!dir.exists()) {
+                        dir.mkdirs()
+                    }
+                }
+                val output = resolver.openOutputStream(insertUri)
+                // 将数据流写入insertUri
+                output?.use { outputStream ->
+                    media.use {
+                        var bytesCopied: Long = 0
+                        var oldProgress = 0
+                        val total = it.available()
+                        val buffer = ByteArray(8 * 1024)
+                        var bytes = it.read(buffer)
+                        while (bytes >= 0) {
+                            outputStream.write(buffer, 0, bytes)
+                            bytesCopied += bytes
+                            bytes = it.read(buffer)
+                            val progress = (bytesCopied * 1.0f / total * 100).toInt()
+                            if (progress != oldProgress) {
+                                oldProgress = progress
+                                progressCallback?.invoke(bytesCopied * 1.0f / total)
+                            }
+                        }
+                        outputStream.flush()
+                    }
+                }
+                if (isAndroidQ) {
+                    values.clear()
+                    values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                    resolver.update(insertUri, values, null, null)
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return@withContext insertUri
+    }
 }
 
 fun File.toUri(context: Context, authority: String): Uri {
