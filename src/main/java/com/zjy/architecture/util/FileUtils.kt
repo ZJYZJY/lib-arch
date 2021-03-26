@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.documentfile.provider.DocumentFile
+import com.zjy.architecture.data.LocalFile
 import com.zjy.architecture.ext.bytes2Hex
 import com.zjy.architecture.ext.tryWith
 import kotlinx.coroutines.Dispatchers
@@ -218,18 +219,18 @@ object FileUtils {
     }
 
     @SuppressLint("InlinedApi")
-    suspend fun saveInMediaStore(
+    suspend fun saveToDownloads(
         context: Context,
         media: InputStream?,
         folder: String,
         fileName: String,
         mimeType: String,
         progressCallback: ((Float) -> Unit)? = null
-    ): Uri? = withContext(Dispatchers.IO) {
+    ): LocalFile? = withContext(Dispatchers.IO) {
         if (folder.isEmpty() || media == null) {
             return@withContext null
         }
-        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             .absolutePath + "/" + folder
         val resolver = context.contentResolver
         //设置文件参数到ContentValues中
@@ -243,19 +244,14 @@ object FileUtils {
             if (isAndroidQ) {
                 put(
                     MediaStore.MediaColumns.RELATIVE_PATH,
-                    "${Environment.DIRECTORY_PICTURES}/$folder"
+                    "${Environment.DIRECTORY_DOWNLOADS}/$folder"
                 )
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             } else {
                 put(MediaStore.MediaColumns.DATA, "$path/$fileName")
             }
         }
-        val external = when {
-            mimeType.startsWith("image/") -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            mimeType.startsWith("video/") -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-            mimeType.startsWith("audio/") -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-            else -> return@withContext null
-        }
+        val external = MediaStore.Downloads.EXTERNAL_CONTENT_URI
         //insertUri表示文件保存的uri路径
         val insertUri = resolver.insert(external, values)
         if (insertUri != null) {
@@ -298,7 +294,7 @@ object FileUtils {
                 e.printStackTrace()
             }
         }
-        return@withContext insertUri
+        return@withContext LocalFile("${path}/${fileName}", insertUri)
     }
 }
 
