@@ -3,6 +3,7 @@ package com.zjy.architecture.base
 import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import com.zjy.architecture.ext.setCustomDensity
 import com.zjy.architecture.fragment.FragmentHandleBackUtil
 import com.zjy.architecture.mvvm.Loading
 import com.zjy.architecture.widget.LoadingDialog
@@ -40,6 +41,7 @@ abstract class BaseActivity : AppCompatActivity(), Loadable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setCustomDensity(this)
         setContentView()
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             if (!isInMultiWindowMode && !isInPictureInPictureMode) {

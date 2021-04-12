@@ -1,5 +1,6 @@
 package com.zjy.architecture.ext
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Point
@@ -44,3 +45,21 @@ val Context.screenSize: Point
         windowManager?.defaultDisplay?.getSize(point)
         return point
     }
+
+/**
+ * 适配统一分辨率，宽度统一为360dp
+ */
+fun setCustomDensity(activity: Activity) {
+    val applicationMetrics = Resources.getSystem().displayMetrics
+    val targetDensity: Float = (applicationMetrics.widthPixels / 360).toFloat()
+    val targetDensityDpi = 160 * targetDensity
+
+    applicationMetrics.density = targetDensity
+    applicationMetrics.scaledDensity = targetDensity
+    applicationMetrics.densityDpi = targetDensityDpi.toInt()
+
+    val activityMetrics = activity.resources.displayMetrics
+    activityMetrics.density = targetDensity
+    activityMetrics.scaledDensity = targetDensity
+    activityMetrics.densityDpi = targetDensityDpi.toInt()
+}
