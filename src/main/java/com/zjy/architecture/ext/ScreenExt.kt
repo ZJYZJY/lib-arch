@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Point
 import android.util.TypedValue
+import android.view.Window
+import android.view.WindowManager
 import kotlin.math.roundToInt
 
 /**
@@ -62,4 +64,15 @@ fun setCustomDensity(activity: Activity) {
     activityMetrics.density = targetDensity
     activityMetrics.scaledDensity = targetDensity
     activityMetrics.densityDpi = targetDensityDpi.toInt()
+}
+
+/**
+ * 全屏状态下，允许内容显示到刘海中
+ */
+fun notchSupport(window: Window?) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+        window?.attributes = window?.attributes?.apply {
+            layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+    }
 }
