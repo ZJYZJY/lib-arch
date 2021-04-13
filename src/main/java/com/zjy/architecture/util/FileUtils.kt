@@ -124,7 +124,7 @@ object FileUtils {
                 context.contentResolver.query(uri, null, null, null, null, signal)?.use {
                     if (it.moveToFirst()) {
                         val name = it.getString(it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
-                        val size = it.getInt(it.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
+                        val size = it.getLong(it.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
                         cont.resume(bundleOf(
                             MediaStore.MediaColumns.DISPLAY_NAME to name,
                             MediaStore.MediaColumns.SIZE to size
@@ -137,9 +137,11 @@ object FileUtils {
                 cont.resumeWithException(e)
             }
         } else {
+            val file = File(path)
+            val size = FileInputStream(file).use { it.channel.size() }
             cont.resume(bundleOf(
-                MediaStore.MediaColumns.DISPLAY_NAME to File(path).name,
-                MediaStore.MediaColumns.SIZE to File(path).length()
+                MediaStore.MediaColumns.DISPLAY_NAME to file.name,
+                MediaStore.MediaColumns.SIZE to size
             ))
         }
     }
