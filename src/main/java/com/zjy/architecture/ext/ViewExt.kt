@@ -1,6 +1,7 @@
 package com.zjy.architecture.ext
 
 import android.graphics.Paint
+import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
@@ -41,6 +42,10 @@ inline fun View.invisible() {
  */
 inline fun View.gone() {
     visibility = View.GONE
+}
+
+inline fun View.haptic(feedbackConstant: Int = HapticFeedbackConstants.KEYBOARD_TAP) {
+    performHapticFeedback(feedbackConstant)
 }
 
 /**
