@@ -74,7 +74,6 @@ object Arch {
         this.mContext = context.applicationContext
         this.debug = debug
         openXLog(context, debug, encryptKey)
-        CrashHandler.init(context, debug)
         ActivityUtils.registerActivityLifecycleCallbacks(context as Application)
         // 初始化ARouter
         if (BuildConfig.DEBUG) {
